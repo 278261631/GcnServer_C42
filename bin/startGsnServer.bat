@@ -1,0 +1,1 @@
+java GCNServer -Xbootclasspath/a: F:\mayong\GcnServer\commons-beanutils-1.9.2.jar;F:\mayong\GcnServer\commons-configuration2-2.0.jar;F:\mayong\GcnServer\commons-lang3-3.4.jar;F:\mayong\GcnServer\commons-logging-1.2.jar 
