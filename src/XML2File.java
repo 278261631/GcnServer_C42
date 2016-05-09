@@ -49,7 +49,7 @@ public class XML2File {
         try
         {
         SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:S");
+        SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
         File file=new File(new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "),
         		shortDateFormat.format(new Date())+".log").getPath());
         if(!file.exists())

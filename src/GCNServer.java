@@ -58,7 +58,7 @@ public class GCNServer extends ServerSocket {
         		cex.printStackTrace();
         	}
 //        	SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyyMMdd");
-//        	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyyMMddHHmmssS");
+//        	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         	String outRootDir=config.getString("outXmlRootDir",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "),"outDir").getPath());
         	String tempFilePath=config.getString("tempFilePath",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "temp.xml").getPath());
 //        	String errorLogFile=config.getString("errorLogFile",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), longDateFormat.format(new Date())+".log").getPath());
@@ -92,7 +92,7 @@ public class GCNServer extends ServerSocket {
     }
 
     public static void main(String[] args) throws IOException {
-    	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:S");
+    	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     	System.out.println("Start : "+longDateFormat.format(new Date()));
         new GCNServer();
     }

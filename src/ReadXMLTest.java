@@ -29,6 +29,16 @@ public class ReadXMLTest {
 		} 
 		
 		System.out.println(config.getRootElementName());
+		System.out.println(config.getProperty("[@ivorn]"));
+		String newFileName="xml";
+		String IvornString=config.getString("[@ivorn]");
+		if (IvornString.contains("#")) {
+			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
+		}else {
+			//error log
+		}
+		System.out.println(newFileName);
+		System.out.println(config.getString("[@ivorn]"));
 		System.out.println(config.getProperty("What.Param[@value]"));
 		System.out.println(config.getProperty("What.Param[@name]"));
 		System.out.println(config.getProperty("What.Description"));
@@ -49,7 +59,7 @@ public class ReadXMLTest {
 	 * @throws IOException 
 	 */
 	public static boolean saveUsefulMessageType(String filePath,String saveRootPath) throws IOException{
-		SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:S");
+		SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     	
 		String copyToFilePath=saveRootPath;
 		Parameters params = new Parameters();
@@ -64,6 +74,9 @@ public class ReadXMLTest {
 			XML2File.writeToLog(e.getMessage());
 			e.printStackTrace();
 		} 
+		String IvornString=config.getString("[@ivorn]"); //new file and folder name like [SWIFT#UVOT_Image_685245-940] 
+		String newFileName="temp.xml";
+		String newSubFolder="unknown"; //maybe from Ivorn 
 		List<Object> nameList = config.getList("What.Param[@name]");
 		List<Object> valueList=config.getList("What.Param[@value]");	
 		String valueOfPacket_type="-1";
@@ -79,6 +92,23 @@ public class ReadXMLTest {
 			XML2File.writeToLog(e.getMessage());
 			PacketType=-1;
 		}
+		if (IvornString.contains("#")) {
+			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
+		}else {
+			//error log
+			XML2File.writeToLog("Error  :  xml信息没有完全被解析");
+			SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+			copyToFilePath=new File(copyToFilePath,"GcnServerLog").getPath();
+			File dirFile=new File(copyToFilePath);
+			if (!dirFile.exists()) {
+				dirFile.mkdirs();
+			}
+			copyToFilePath=new File(copyToFilePath,longDateFormatFile.format(new Date())+"_"+new File(filePath).getName()).getPath();
+			XML2File.writeToLog(longDateFormatFile.format(new Date())+"\t\t\t"+copyToFilePath);
+			System.out.println("Error  :  xml信息没有完全被解析");
+			File copyToFile = new File(copyToFilePath);
+			new File(filePath).renameTo(copyToFile);
+		}
 //		config.clear();
 //		builder.re
 //		params.cl
@@ -86,8 +116,8 @@ public class ReadXMLTest {
 		//I am alive
 		if (PacketType==3) {	
 			subFolderName="GcnServerLog";
-			System.out.println(longDateFormat.format(new Date())+"    I am alive  ");
-//			return false; 
+			System.out.println(longDateFormat.format(new Date())+"                              I am alive  ");
+			return false; 
 		}
 		//Kill
 		if (PacketType==4) {								
@@ -109,8 +139,9 @@ public class ReadXMLTest {
 
 		//The "Swift" notices (types=60-99: positions, lightcurves, spectra, images, etc) are GRB locations/images/etc as determined by the Swift-BAT/-XRT/-UVOT instruments. They are discussed in more detail in the Swift data product.
 		if (PacketType>=60&&PacketType<=99) {				
-			subFolderName="Swift";
+			subFolderName="Swift"; //or maybe you can get name from IVORN
 			System.out.println(longDateFormat.format(new Date())+"    Swift");
+
 		}
 		
 		// The "AGILE" notices (types=100-102,107-109) contains the GRB positions and spacecraft pointing_direction.
@@ -151,14 +182,16 @@ public class ReadXMLTest {
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"    Misc");
 		}
-		SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssS");
+		SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		copyToFilePath=new File(copyToFilePath,subFolderName).getPath();
 		File dirFile=new File(copyToFilePath);
 		if (!dirFile.exists()) {
 			dirFile.mkdirs();
 		}
-		copyToFilePath=new File(copyToFilePath,longDateFormatFile.format(new Date())+"_"+new File(filePath).getName()).getPath();
-		System.out.println(copyToFilePath);
+//		copyToFilePath=new File(copyToFilePath,longDateFormatFile.format(new Date())+"_"+new File(filePath).getName()).getPath();
+		copyToFilePath=new File(copyToFilePath,newFileName).getPath();
+		XML2File.writeToLog(longDateFormatFile.format(new Date())+"\t\t\t"+copyToFilePath);
+//		System.out.println(copyToFilePath);
 		File copyToFile = new File(copyToFilePath);
 		new File(filePath).renameTo(copyToFile);
 		
