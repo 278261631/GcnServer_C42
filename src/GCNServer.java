@@ -21,6 +21,7 @@ public class GCNServer extends ServerSocket {
                 new CreateServerThread(socket);//当有请求时，启一个线程处理
             }
         } catch (IOException e) {
+        	XML2File.writeToLog(e.getMessage());
         } finally {
             close();
         }
@@ -55,6 +56,7 @@ public class GCNServer extends ServerSocket {
         	catch (ConfigurationException cex)
         	{
         	    // Something went wrong
+        		XML2File.writeToLog(cex.getMessage());
         		cex.printStackTrace();
         	}
 //        	SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -93,7 +95,7 @@ public class GCNServer extends ServerSocket {
 
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-    	System.out.println("Start : "+longDateFormat.format(new Date()));
+    	System.out.println("Server V20160510  Start  : "+longDateFormat.format(new Date()));
         new GCNServer();
     }
 }

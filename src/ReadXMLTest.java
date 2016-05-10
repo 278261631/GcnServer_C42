@@ -93,7 +93,10 @@ public class ReadXMLTest {
 			PacketType=-1;
 		}
 		if (IvornString.contains("#")) {
-			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
+//			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
+			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1);
+			newFileName=newFileName.replace(":", "").replace(".", "").replace("", "");
+			newFileName=newFileName+".xml";
 		}else {
 			//error log
 			XML2File.writeToLog("Error  :  xml信息没有完全被解析");
@@ -109,9 +112,20 @@ public class ReadXMLTest {
 			File copyToFile = new File(copyToFilePath);
 			new File(filePath).renameTo(copyToFile);
 		}
-//		config.clear();
-//		builder.re
-//		params.cl
+//	以下是某软件的目录列表
+//		 AGILE
+//		  backup
+//		  CALET
+//		  Fermi
+//		  GRO
+//		  HETE
+//		  INTEGRAL
+//		  IPN
+//		  KONUS
+//		  MAXI
+//		  MOA
+//		  SNEWS
+//		  SWIFT
 		String subFolderName="GcnServerLog"; //默认  default is Log
 		//I am alive
 		if (PacketType==3) {	
