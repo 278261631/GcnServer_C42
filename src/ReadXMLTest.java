@@ -96,7 +96,9 @@ public class ReadXMLTest {
 //			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
 			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1);
 			newFileName=newFileName.replace(":", "").replace(".", "").replace("", "");
-			System.out.println(longDateFormat.format(new Date())+"\t\t\t"+newFileName);
+			if (PacketType!=3) {
+				System.out.println(longDateFormat.format(new Date())+"\t\t\t"+newFileName);				
+			}
 			newFileName=newFileName+".xml";
 			
 		}else {
