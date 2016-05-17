@@ -96,7 +96,9 @@ public class ReadXMLTest {
 //			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1)+".xml";
 			newFileName=IvornString.substring(IvornString.lastIndexOf("#")+1);
 			newFileName=newFileName.replace(":", "").replace(".", "").replace("", "");
+			System.out.println(longDateFormat.format(new Date())+"\t\t\t"+newFileName);
 			newFileName=newFileName+".xml";
+			
 		}else {
 			//error log
 			XML2File.writeToLog("Error  :  xml信息没有完全被解析");

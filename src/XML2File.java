@@ -55,7 +55,7 @@ public class XML2File {
         if(!file.exists())
             file.createNewFile();
         FileOutputStream out=new FileOutputStream(file,true); //
-        str=longDateFormat.format(new Date())+"\r\n"+str;
+        str="\r\n"+longDateFormat.format(new Date())+"\r\n"+str;
         out.write(str.getBytes("utf-8"));
         out.close();
         }
