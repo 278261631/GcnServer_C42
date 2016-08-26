@@ -200,6 +200,13 @@ public class ReadXMLTest {
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"    Misc");
 		}
+		//AMON_ICECUBE_COINC			158	AMON_ICECUBE_HESE   AMON_ICECUBE_EHE
+		if (PacketType==157||PacketType==158
+				||PacketType==169) {					
+			subFolderName="AMON_ICECUBE";
+			System.out.println(longDateFormat.format(new Date())+"    	AMON_ICECUBE");
+		}
+		
 		SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		copyToFilePath=new File(copyToFilePath,subFolderName).getPath();
 		File dirFile=new File(copyToFilePath);
