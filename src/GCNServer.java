@@ -5,12 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.configuration2.AbstractConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class GCNServer extends ServerSocket {
     private static final int SERVER_PORT = 5348;
+	private static GCNServer gcnServer;
 
     public GCNServer() throws IOException {
         super(SERVER_PORT);
@@ -61,8 +64,17 @@ public class GCNServer extends ServerSocket {
         	}
 //        	SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyyMMdd");
 //        	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        	((AbstractConfiguration) config).setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         	String outRootDir=config.getString("outXmlRootDir",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "),"outDir").getPath());
         	String tempFilePath=config.getString("tempFilePath",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "temp.xml").getPath());
+//        	String[] emails=config.getStringArray("emails");//"278261631@qq.com"
+        	String emailString=config.getString("emails");//"278261631@qq.com"
+        	String[] emails=emailString.split(",");
+        	String resultString=TestSendEmail.emailCheck(emails);
+        	if (null!=resultString && resultString.length()>0) {
+				System.out.println(resultString);
+				return;
+			}
 //        	String errorLogFile=config.getString("errorLogFile",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), longDateFormat.format(new Date())+".log").getPath());
       	    System.out.println("tempFilePath : "  + tempFilePath);  
     	    System.out.println("outXmlRootDir : "  + outRootDir);  
@@ -80,7 +92,7 @@ public class GCNServer extends ServerSocket {
                     	line = bufferedReader.readLine();
 //                    	System.out.println(line);
                     	//save xmlFile first , Then Copy to other place
-						xmlOldString=XML2File.xmlStringToFile(xmlOldString, line, tempFilePath,outRootDir);
+						xmlOldString=XML2File.xmlStringToFile(xmlOldString, line, tempFilePath,outRootDir,emails);
                 }
                 System.out.println("Client(" + getName() + ") exit!");
 //                printWriter.close();
@@ -95,7 +107,14 @@ public class GCNServer extends ServerSocket {
 
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-    	System.out.println("Server V20160517.2  Start  : "+longDateFormat.format(new Date()));
-        new GCNServer();
+    	System.out.println("Server V20160829.1  Start  : "+longDateFormat.format(new Date()));
+        gcnServer = new GCNServer();
+        
+        //run in windows command demo :
+//        # ####copy *.jar lib/*.jar files to java/jre/lib/ext 
+//       and run  java GCNServer 
+        
+        
+        
     }
 }

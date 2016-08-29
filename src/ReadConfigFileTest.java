@@ -31,16 +31,17 @@ public class ReadConfigFileTest {
     	    		+ config.getString("colors.background"));  
     	    // output : colors.background:#FFFFFF  
     	    
-    	    System.out.println("window.width:" + config.getInt("window.width"));  
-    	    System.out.println("window.width:" + config.getInt("hehe"));  
+//    	    System.out.println("window.width:" + config.getInt("window.width"));  
+//    	    System.out.println("window.width:" + config.getInt("hehe"));  
     	    // output: window.width:500  
     	    
-    	    String[] colors = config.getStringArray("colors.pie");  
-    	    System.out.println("colors.pie array:" + colors);  
+//    	    String[] colors = config.getStringArray("colors.pie");  
+//    	    System.out.println("colors.pie array:" + colors);  
     	    // output: colors.pie array:[Ljava.lang.String;@369ca84f  
     	    
-    	    List<Object> colorList = config.getList("colors.pie");  
-    	    System.out.println("colors.pie list:" + colorList);  
+//    	    List<Object> colorList = config.getList("colors.pie");  
+//    	    System.out.println("colors.pie list:" + colorList);  
+    	    System.out.println(config.toString());
     	}
     	catch (ConfigurationException cex)
     	{

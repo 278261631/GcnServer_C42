@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.mail.EmailAttachment;
 
 
 public class ReadXMLTest {
@@ -51,15 +52,20 @@ public class ReadXMLTest {
 
 	}
 	
+	
+	public static boolean isSendAliveEmailToday=false;
+	public static String   lastSendAliveEmailDay="";
 	/**
 	 * 
 	 * @param filePath 临时文件路径   tempXml FullPath
 	 * @param saveRootPath 存储的根目录		root Directory (save useful XML in it)
+	 * @param emails email列表 用逗号分隔 
 	 * @return
 	 * @throws IOException 
 	 */
-	public static boolean saveUsefulMessageType(String filePath,String saveRootPath) throws IOException{
+	public static boolean saveUsefulMessageType(String filePath,String saveRootPath, String[] emails) throws IOException{
 		SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+		SimpleDateFormat lastDayFormat = new SimpleDateFormat("yyyy-MM-dd");
     	
 		String copyToFilePath=saveRootPath;
 		Parameters params = new Parameters();
@@ -135,6 +141,23 @@ public class ReadXMLTest {
 		if (PacketType==3) {	
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"                              I am alive  ");
+			if (!(lastSendAliveEmailDay.equals(lastDayFormat.format(new Date())))) {
+				isSendAliveEmailToday=false;
+			}
+			if(!isSendAliveEmailToday){
+//				isSendAliveEmailToday = TestSendEmail.sendToEmails( "C42 : GCN - I am alive" ,emails ,"GCN send :I am alive");	
+
+//				XML2File.readLogToString(filePath);
+				String messageContent=XML2File.readLogToString(filePath);
+//				  EmailAttachment attachment = new EmailAttachment();
+//				  attachment.setPath(filePath);
+//				  attachment.setDisposition(EmailAttachment.INLINE);
+//				  attachment.setDescription(newFileName);
+//				  attachment.setName("John");
+				isSendAliveEmailToday=TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+				
+				lastSendAliveEmailDay=lastDayFormat.format(new Date());
+			}
 			return false; 
 		}
 		//Kill
@@ -159,6 +182,15 @@ public class ReadXMLTest {
 		if (PacketType>=60&&PacketType<=99) {				
 			subFolderName="Swift"; //or maybe you can get name from IVORN
 			System.out.println(longDateFormat.format(new Date())+"    Swift");
+			if (newFileName.toUpperCase().startsWith("BAT")) { //Swift_BAT_*的事件发送email
+				String messageContent=XML2File.readLogToString(filePath);
+//				  EmailAttachment attachment = new EmailAttachment();
+//				  attachment.setPath(filePath);
+//				  attachment.setDisposition(EmailAttachment.ATTACHMENT);
+//				  attachment.setDescription(newFileName);
+//				  attachment.setName("John");
+				TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+			}
 
 		}
 		
@@ -204,7 +236,18 @@ public class ReadXMLTest {
 		if (PacketType==157||PacketType==158
 				||PacketType==169) {					
 			subFolderName="AMON_ICECUBE";
-			System.out.println(longDateFormat.format(new Date())+"    	AMON_ICECUBE");
+//			System.out.println(longDateFormat.format(new Date())+"    	AMON_ICECUBE");
+//			TestSendEmail.sendToEmails( "C42 : AMON_ICECUBE",emails,config.toString());
+			
+			String messageContent=XML2File.readLogToString(filePath);
+//			  EmailAttachment attachment = new EmailAttachment();
+//			  attachment.setPath(filePath);
+//			  attachment.setDisposition(EmailAttachment.ATTACHMENT);
+//			  attachment.setDescription(newFileName);
+//			  attachment.setName("John");
+			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+			
+			
 		}
 		
 		SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
