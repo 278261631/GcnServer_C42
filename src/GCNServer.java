@@ -107,7 +107,7 @@ public class GCNServer extends ServerSocket {
 
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-    	System.out.println("Server V20160829.1  Start  : "+longDateFormat.format(new Date()));
+    	System.out.println("Server V20160914.1  Start  : "+longDateFormat.format(new Date()));
         gcnServer = new GCNServer();
         
         //run in windows command demo :

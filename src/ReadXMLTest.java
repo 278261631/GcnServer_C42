@@ -238,6 +238,8 @@ public class ReadXMLTest {
 		if (PacketType==149) {				
 			subFolderName="SNEWS";
 			System.out.println(longDateFormat.format(new Date())+"    SNEWS");
+			String messageContent=XML2File.readLogToString(filePath);
+			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
 		}
 		//AMON_ICECUBE_COINC			158	AMON_ICECUBE_HESE   AMON_ICECUBE_EHE
 		if (PacketType==157||PacketType==158
