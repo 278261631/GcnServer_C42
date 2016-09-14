@@ -164,6 +164,8 @@ public class ReadXMLTest {
 		if (PacketType==4) {								
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"    Kill  ");
+			String messageContent="Server Kill ";
+			TestSendEmail.sendToEmails( "C42 :  客户端被停止 ",emails,messageContent);
 		}
 
 		// IPN_POS 
@@ -231,6 +233,11 @@ public class ReadXMLTest {
 		if ((PacketType>=5&&PacketType<=10)||(PacketType>=10&&PacketType<=21)||PacketType==23) {				
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"    Misc");
+		}
+//		SNEWS: 149   
+		if (PacketType==149) {				
+			subFolderName="SNEWS";
+			System.out.println(longDateFormat.format(new Date())+"    SNEWS");
 		}
 		//AMON_ICECUBE_COINC			158	AMON_ICECUBE_HESE   AMON_ICECUBE_EHE
 		if (PacketType==157||PacketType==158
