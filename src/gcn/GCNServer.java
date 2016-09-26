@@ -1,15 +1,20 @@
+package gcn;
+
 
 import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+//import java.util.List;
 
 import org.apache.commons.configuration2.AbstractConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import util.TestSendEmail;
+import util.XML2File;
 
 public class GCNServer extends ServerSocket {
     private static final int SERVER_PORT = 5348;
@@ -108,7 +113,7 @@ public class GCNServer extends ServerSocket {
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     	System.out.println("Server V20160914.1  Start  : "+longDateFormat.format(new Date()));
-        gcnServer = new GCNServer();
+        setGcnServer(new GCNServer());
         
         //run in windows command demo :
 //        # ####copy *.jar lib/*.jar files to java/jre/lib/ext 
@@ -117,4 +122,12 @@ public class GCNServer extends ServerSocket {
         
         
     }
+
+	public static GCNServer getGcnServer() {
+		return gcnServer;
+	}
+
+	public static void setGcnServer(GCNServer gcnServer) {
+		GCNServer.gcnServer = gcnServer;
+	}
 }

@@ -1,3 +1,5 @@
+package util;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -8,6 +10,10 @@ import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.mail.EmailAttachment;
+
+import acp.AcpControl;
+import acp.GenerateAcpPlanString;
+
 
 
 public class ReadXMLTest {
@@ -158,6 +164,8 @@ public class ReadXMLTest {
 				
 				lastSendAliveEmailDay=lastDayFormat.format(new Date());
 			}
+
+
 			return false; 
 		}
 		//Kill
@@ -192,6 +200,18 @@ public class ReadXMLTest {
 //				  attachment.setDescription(newFileName);
 //				  attachment.setName("John");
 				TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+				
+				String stringRa = config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C1");
+				String stringDec=config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C2");	
+				System.out.println("RA:   "+stringRa+"   Dec:   "+stringDec);
+				
+				String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
+				String planString=GenerateAcpPlanString.doGenerate();
+				XML2File.writeToPlan(planString, planFilePath);
+				File sorcePlanFile = new File(planFilePath);
+				String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","plan.txt").getPath();
+				sorcePlanFile.renameTo(new File(copyToPlanFilePath));
+				AcpControl.runPlan(copyToPlanFilePath);
 			}
 
 		}
@@ -256,6 +276,13 @@ public class ReadXMLTest {
 //			  attachment.setName("John");
 			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
 			
+			String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
+			String planString=GenerateAcpPlanString.doGenerate();
+			XML2File.writeToPlan(planString, planFilePath);
+			File sorcePlanFile = new File(planFilePath);
+			String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","plan.txt").getPath();
+			sorcePlanFile.renameTo(new File(copyToPlanFilePath));
+			AcpControl.runPlan(copyToPlanFilePath);
 			
 		}
 		
@@ -271,7 +298,7 @@ public class ReadXMLTest {
 //		System.out.println(copyToFilePath);
 		File copyToFile = new File(copyToFilePath);
 		new File(filePath).renameTo(copyToFile);
-		
+
 		return false; //这里应该是输出错误信息
 				
 	}

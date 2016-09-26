@@ -1,4 +1,6 @@
-﻿
+﻿package util;
+
+
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -63,6 +65,22 @@ public class XML2File {
         {
             System.out.println(ex.getStackTrace());
         }
+    }    
+   public static void writeToPlan(String str,String filePath)
+   {
+    	try
+    	{
+    		File file=new File(filePath);
+    		if(!file.exists())
+    			file.createNewFile();
+    		FileOutputStream out=new FileOutputStream(file,false); //
+    		out.write(str.getBytes("utf-8"));
+    		out.close();
+    	}
+    	catch(IOException ex)
+    	{
+    		System.out.println(ex.getStackTrace());
+    	}
     }    
     public static void writeLogCoverExist(String str,String filePath)
     {
