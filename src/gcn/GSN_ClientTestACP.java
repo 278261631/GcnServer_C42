@@ -47,6 +47,8 @@ public class GSN_ClientTestACP {
            
 
 
+            //这里要多加测试： 生成普通plan  BAT plan  BAT 不同方位，不同高度 的plan
+            
             String testFilePath1=config.getString("testFilePath1",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath1.xml").getPath());
             String testFilePath2=config.getString("testFilePath2",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath2.xml").getPath());
             String testFilePath3=config.getString("testFilePath3",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath3.xml").getPath());

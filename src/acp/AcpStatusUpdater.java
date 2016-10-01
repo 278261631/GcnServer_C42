@@ -5,18 +5,24 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class AcpStatusUpdater {
 
 
-	public static  String updateSystemStatus() {
+	private static  String updateSystemStatus() {
 		PrintWriter out = null;
 	        BufferedReader in = null;
 	        String result = "";
 	        try {
+	        	System.out.println( AcpControl.getNowTimeString()+ "更新系统状态 ");
 	            URL realUrl = new URL("http://192.168.1.130:81/ac/asystemstatus.asp");
 	            // 打开和URL之间的连接
 	            URLConnection conn = realUrl.openConnection();
@@ -69,7 +75,43 @@ public class AcpStatusUpdater {
 	       return result;
 	        
 	        
-	}    
+	} 
+	
+	public static Map<String,String> acpResultToMap(String resultString){
+		Map<String, String> resultMap= new HashMap<String,String>();
+		if (resultString!=null && resultString.indexOf(";")>0) {
+			resultString=resultString.replace("_s(", "");
+			resultString=resultString.replace(")", "");
+		 String []	resultStringArray = resultString.split(";");
+		 for (String string : resultStringArray) {
+			 String stringItem=string.replace("\'", "");
+			 String [] itemArray=stringItem.split(",");
+			 if (itemArray.length>1) {
+				 resultMap.put(itemArray[0], itemArray[1]);
+			}
+		}
+		}
+		
+		return resultMap;
+	}
+	
+	
+	public static  Map<String,String> getSystemStatus() {
+		String resultString = AcpStatusUpdater.updateSystemStatus();
+//		 System.out.println( resultString);
+		Map<String, String> resultMap = AcpStatusUpdater.acpResultToMap(resultString);
+		return resultMap;
+//		System.out.println(resultMap.get("sm_obsStat"));
+//		System.out.println(resultMap.get("sm_obsStat"));
+//		System.out.println(resultMap.get("sm_plnTitle"));
+//		try {
+//			System.out.println(URLDecoder.decode(resultMap.get("sm_utc"),"UTF-8"));
+//			System.out.println(URLDecoder.decode(resultString,"UTF-8"));
+//		} catch (UnsupportedEncodingException e) {
+			//解码错误
+//			e.printStackTrace();
+//		}
+	}   
 	
 
 	

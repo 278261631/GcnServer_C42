@@ -13,6 +13,7 @@ import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
+import acp.ThreadAcpControl;
 import util.TestSendEmail;
 import util.XML2File;
 
@@ -20,7 +21,7 @@ public class GCNServer extends ServerSocket {
     private static final int SERVER_PORT = 5348;
 	private static GCNServer gcnServer;
 
-    public GCNServer() throws IOException {
+    public GCNServer() throws IOException  {
         super(SERVER_PORT);
 
         try {
@@ -106,13 +107,19 @@ public class GCNServer extends ServerSocket {
             } catch (IOException e) {
             	e.printStackTrace();
             	XML2File.writeToLog(e.getMessage());
-            }
+            } catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
     }
 
+    public static Object lock = new Object();
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
     	System.out.println("Server V20160914.1  Start  : "+longDateFormat.format(new Date()));
+    	ThreadAcpControl a = new ThreadAcpControl(lock);
+    	a.start();
         setGcnServer(new GCNServer());
         
         //run in windows command demo :

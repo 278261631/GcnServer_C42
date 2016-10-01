@@ -10,7 +10,7 @@ import java.util.*;
 public class XML2File {
 	
 	//完成写入就返回"" 否则返回拼接之后xmlString
-	public static String xmlStringToFile(String xmlOldString,String xmlNewString,String filePath, String saveRootPath, String[] emails) throws IOException{
+	public static String xmlStringToFile(String xmlOldString,String xmlNewString,String filePath, String saveRootPath, String[] emails) throws IOException, InterruptedException{
 		String startXmlString="<?xml version = '1.0' encoding = 'UTF-8'?>";
 		String endXmlString="</voe:VOEvent>";
 

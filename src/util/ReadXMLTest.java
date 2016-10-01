@@ -2,9 +2,11 @@ package util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -12,7 +14,10 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.mail.EmailAttachment;
 
 import acp.AcpControl;
+import acp.AcpStatusUpdater;
 import acp.GenerateAcpPlanString;
+import acp.MyAcpCommandList;
+import gcn.GCNServer;
 
 
 
@@ -68,8 +73,9 @@ public class ReadXMLTest {
 	 * @param emails email列表 用逗号分隔 
 	 * @return
 	 * @throws IOException 
+	 * @throws InterruptedException 
 	 */
-	public static boolean saveUsefulMessageType(String filePath,String saveRootPath, String[] emails) throws IOException{
+	public static boolean saveUsefulMessageType(String filePath,String saveRootPath, String[] emails) throws IOException, InterruptedException{
 		SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 		SimpleDateFormat lastDayFormat = new SimpleDateFormat("yyyy-MM-dd");
     	
@@ -209,9 +215,108 @@ public class ReadXMLTest {
 				String planString=GenerateAcpPlanString.doGenerate();
 				XML2File.writeToPlan(planString, planFilePath);
 				File sorcePlanFile = new File(planFilePath);
-				String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","plan.txt").getPath();
+				String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","BatPlan.txt").getPath();
 				sorcePlanFile.renameTo(new File(copyToPlanFilePath));
-				AcpControl.runPlan(copyToPlanFilePath);
+				System.out.println(">>>>>>>>");
+				synchronized (GCNServer.lock) {
+					MyAcpCommandList.addParam("stringRa", stringRa);
+					MyAcpCommandList.addParam("stringDec", stringDec);
+					MyAcpCommandList.addParam("planName", "BatPlan");
+					GCNServer.lock.notify();
+					System.out.println("<<<<<<<<");
+				}
+				
+				
+//				Map<String, String> statusMap=AcpStatusUpdater.getSystemStatus();
+//				String sm_obsStat = URLDecoder.decode(statusMap.get("sm_obsStat"),"UTF-8");
+//				String sm_plnTitle = URLDecoder.decode(statusMap.get("sm_plnTitle"),"UTF-8");
+//				String sm_az = URLDecoder.decode(statusMap.get("sm_az"),"UTF-8");
+//				String sm_alt = URLDecoder.decode(statusMap.get("sm_alt"),"UTF-8");
+//				String sm_ra = URLDecoder.decode(statusMap.get("sm_ra"),"UTF-8");
+//				String sm_dec = URLDecoder.decode(statusMap.get("sm_plnTitle"),"UTF-8");
+//				String PlanName= "BatPlan";
+//				boolean isSendStopPlan=false;
+//				boolean isSendRunPlan=false;
+//				
+//				if (sm_obsStat!=null&&sm_obsStat.equals("@In use")) { //是否是工作状态 @In use   @anReady
+//				
+//					if (sm_plnTitle != null&&sm_plnTitle.equals("Plan "+PlanName)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
+//						
+//						if (sm_ra!=null && sm_dec!=null && sm_ra.equals(stringRa)&&sm_dec.equals(stringDec)) { //是否是相同RaDec 目标
+//							System.out.println("收到了后续的BAT消息，继续执行");
+//						}else{
+//							
+//							//send email 收到了GCN BAT消息(sm_ra sm_dec) 但是已经在执行另外一个不同的 GCN_Plan     (stringRa  stringDec)
+//						}
+//						isSendRunPlan=false;
+//					}else {
+//						//发送stop
+//						isSendStopPlan=true;
+//						isSendRunPlan=true;
+//					}
+//				}else {
+//					//发送一下stop 
+//					isSendStopPlan=true;
+//					isSendRunPlan=true;
+//				}
+//	
+//				if (isSendStopPlan) {
+//					//stop plan
+//					int stopCounter =1;
+//					String stopResult="";
+//					while (!stopResult.equals(" ----Received, but there is no script running.----")) {
+//						Thread.sleep(2000);
+//						stopResult=AcpControl.stopRunPlan();
+//						stopCounter++;
+//						if (stopCounter>10) {
+//							break;							
+//						}
+//					}
+//					
+//				}
+//				//这里是 手动 操作望远镜 转向 ，因为撞墙的问题 >_< 
+//				if (sm_az.equals(sm_dec)) {
+//					System.out.println("不要撞墙啊 HMT");
+//				}
+//				//执行plan
+//				if (isSendRunPlan) {
+//					//stop plan
+//					int statusCounter =1;
+//					String sm_obsStatBeforeRun="";
+//					while (!(sm_obsStatBeforeRun!=null&&sm_obsStatBeforeRun.equals("@anReady"))) {
+//						Thread.sleep(2000);
+//						Map<String, String> statusMapBeforeRun=AcpStatusUpdater.getSystemStatus();
+//						sm_obsStatBeforeRun = URLDecoder.decode(statusMapBeforeRun.get("sm_obsStat"),"UTF-8");
+//						if (sm_obsStatBeforeRun!=null&&sm_obsStatBeforeRun.equals("@anReady")) {
+//							break;
+//						}
+//						statusCounter++;
+//						if (statusCounter>20) {
+//							break;							
+//						}
+//					}
+//				
+//					int statusCheckCounter =1;
+//					String sm_plnTitle_Status="";
+//					while (!(sm_plnTitle_Status!=null&&sm_plnTitle_Status.equals("Plan "+PlanName))) {
+//						Thread.sleep(1000);
+//						
+//						String runPlanResult=AcpControl.runPlan(copyToPlanFilePath);	
+//						System.out.println(runPlanResult);
+//						Thread.sleep(5000);
+//						Map<String, String> statusMapBeforeRun=AcpStatusUpdater.getSystemStatus();
+//						 sm_plnTitle_Status = URLDecoder.decode(statusMapBeforeRun.get("sm_plnTitle"),"UTF-8");
+//						if (sm_plnTitle_Status!=null&&sm_plnTitle_Status.equals("Plan \"plan\"")) {
+////						if (sm_plnTitle_Status!=null&&sm_plnTitle_Status.equals("Plan "+PlanName)) {
+//							break;
+//						}
+//						statusCheckCounter++;
+//						if (statusCheckCounter>20) {
+//							break;							
+//						}
+//					}
+//				}
+				
 			}
 
 		}

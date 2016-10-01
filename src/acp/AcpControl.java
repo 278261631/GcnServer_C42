@@ -7,6 +7,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class AcpControl {
@@ -17,6 +22,7 @@ public class AcpControl {
 	        BufferedReader in = null;
 	        String result = "";
 	        try {
+	        	System.out.println( getNowTimeString()+ "准备启动 ");
 	            URL realUrl = new URL("http://192.168.1.130:81/ac/aacqplan.asp");
 	            // 打开和URL之间的连接
 	            URLConnection conn = realUrl.openConnection();
@@ -74,11 +80,18 @@ public class AcpControl {
 	}    
 	
 
+	
+
+	static SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+	public static String getNowTimeString (){
+		return longDateFormatFile.format(new Date()) +" :\t\t";
+	}
 	public static String stopRunPlan() {
 		PrintWriter out = null;
 		BufferedReader in = null;
 		String result = "";
 		try {
+			System.out.println( getNowTimeString()+ "尝试停止 ");
 //			http://192.168.1.130:81/ac/astopscript.asp
 			URL realUrl = new URL("http://192.168.1.130:81/ac/astopscript.asp");
 			// 打开和URL之间的连接
@@ -132,5 +145,7 @@ public class AcpControl {
 		return  result;
 	}    
 	
+	
+
 
 }
