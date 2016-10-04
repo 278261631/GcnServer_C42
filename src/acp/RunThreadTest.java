@@ -20,7 +20,7 @@ public class RunThreadTest {
 
 			while (true) {
 
-				System.out.println("等待命令：");
+				
 				BufferedReader stream = new BufferedReader(new InputStreamReader(System.in));
 				String s="";
 				try {
@@ -29,8 +29,10 @@ public class RunThreadTest {
 					e.printStackTrace();
 				}
 				synchronized (lock) {
-					String stringRa = "21:30:49.17";
-					String stringDec = "12�14'41.6\"";
+//					String stringRa = "21:30:49.17";
+//					String stringDec = "12�14'41.6\"";
+					String stringRa = "293.7041";
+					String stringDec = "21.8799";
 					//					MyAcpCommandList.add(s);
 					MyAcpCommandList.addParam("stringRa" , stringRa);
 					MyAcpCommandList.addParam("stringDec", stringDec);

@@ -179,6 +179,7 @@ public class ReadXMLTest {
 			subFolderName="GcnServerLog";
 			System.out.println(longDateFormat.format(new Date())+"    Kill  ");
 			String messageContent="Server Kill ";
+			isSendAliveEmailToday=false;
 			TestSendEmail.sendToEmails( "C42 :  客户端被停止 ",emails,messageContent);
 		}
 
@@ -208,15 +209,25 @@ public class ReadXMLTest {
 				TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
 				
 				String stringRa = config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C1");
+				
+				//ra 可能需要转换 xml 里用的是度,acp用的是时角
+//				stringRa="21";
+				
 				String stringDec=config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C2");	
 				System.out.println("RA:   "+stringRa+"   Dec:   "+stringDec);
 				
-				String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
-				String planString=GenerateAcpPlanString.doGenerate();
-				XML2File.writeToPlan(planString, planFilePath);
-				File sorcePlanFile = new File(planFilePath);
-				String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","BatPlan.txt").getPath();
-				sorcePlanFile.renameTo(new File(copyToPlanFilePath));
+//				String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "BatPlan.txt").getPath();
+//				double raInDegree=Double.parseDouble(stringRa);
+//				double ha= (24*raInDegree)/360;
+//				System.out.println(">>>>>>ha>>>>>>>>"+ha);
+//				String planString=GenerateAcpPlanString.doGenerateZenithFirst(ha, stringDec, zenithRa, zenithDec);
+//				XML2File.writeToPlan(planString, planFilePath);
+//				File sorcePlanFile = new File(planFilePath);
+//				String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","BatPlan.txt").getPath();
+//				sorcePlanFile.renameTo(new File(copyToPlanFilePath));
+//				XML2File.writeToPlan(planString, copyToPlanFilePath);
+				//判定当前时间和高度 是否需要拍摄
+				//？？？？？？？？？？
 				System.out.println(">>>>>>>>");
 				synchronized (GCNServer.lock) {
 					MyAcpCommandList.addParam("stringRa", stringRa);

@@ -76,6 +76,7 @@ def horizontal_to_equatorial(latitude, lst, altitude, Azimuth):
     From Duffett-Smith1990, 1500 EQHOR and 1600 HRANG
     """
     ha, dec = horizontal_to_hadec(latitude, altitude, Azimuth)
+#     print repr(ha)+","+repr(dec);
     ra = ha_to_ra(ha, lst)
 
     return ra, dec
