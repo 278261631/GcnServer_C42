@@ -19,8 +19,8 @@ import os,sys
 # decIndegrees=89.25
 raInDegrees=sys.argv[1]
 decIndegrees=sys.argv[2]
-print raInDegrees
-print decIndegrees
+# print raInDegrees
+# print decIndegrees
 # raInDegrees=172.5
 # decIndegrees=3.66
 # numpy.float(raInDegrees)

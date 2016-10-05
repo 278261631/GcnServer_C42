@@ -17,13 +17,13 @@ import org.apache.commons.codec.binary.Base64;
 public class AcpStatusUpdater {
 
 
-	private static  String updateSystemStatus() {
+	private static  String updateSystemStatus(String url,String userName,String userPass) {
 		PrintWriter out = null;
 	        BufferedReader in = null;
 	        String result = "";
 	        try {
-	        	System.out.println( AcpControl.getNowTimeString()+ "更新系统状态 ");
-	            URL realUrl = new URL("http://192.168.1.130:81/ac/asystemstatus.asp");
+	        	System.out.println( AcpControl.getNowTimeString()+ "update acp status  更新系统状态 ");
+	            URL realUrl = new URL(url+"/ac/asystemstatus.asp");
 	            // 打开和URL之间的连接
 	            URLConnection conn = realUrl.openConnection();
 	            
@@ -31,7 +31,7 @@ public class AcpStatusUpdater {
 	            // 设置通用的请求属性
 	            conn.setRequestProperty("accept", "*/*");
 	            conn.setRequestProperty("connection", "Keep-Alive");
-	            String input = "mayong" + ":" + "mayong";
+	            String input = userName + ":" + userPass;
 	            Base64 base64 = new Base64();
 	            String encoding =  base64.encodeToString(input.getBytes());
 	            conn.setRequestProperty("Authorization", "Basic " + encoding);
@@ -96,8 +96,8 @@ public class AcpStatusUpdater {
 	}
 	
 	
-	public static  Map<String,String> getSystemStatus() {
-		String resultString = AcpStatusUpdater.updateSystemStatus();
+	public static  Map<String,String> getSystemStatus(String url,String userName,String userPass) {
+		String resultString = AcpStatusUpdater.updateSystemStatus(url,userName,userPass);
 //		 System.out.println( resultString);
 		Map<String, String> resultMap = AcpStatusUpdater.acpResultToMap(resultString);
 		return resultMap;

@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import util.XML2File;
+
 public class ThreadAcpControl extends Thread {
 
 	private Object lock;
@@ -23,8 +29,28 @@ public class ThreadAcpControl extends Thread {
 	@SuppressWarnings("unused")
 	@Override
 	public void run() {
+		Configurations configs = new Configurations();
+    	Configuration config = null;
+    	try
+    	{
+    	    config = configs.properties(new File("usergui.properties"));
+    	}
+    	catch (ConfigurationException cex)
+    	{
+    	    // Something went wrong
+    		XML2File.writeToLog(cex.getMessage());
+    		cex.printStackTrace();
+    	}
+    	String acpPlanPath = config.getString("acpPlanPath");
+    	String python27Path = config.getString("python27Path");
+    	String acpUrl = config.getString("acpUrl");
+    	String acpUser = config.getString("acpUser");
+    	String acpPass = config.getString("acpPass");
+    	String filter = config.getString("filter","");
+    	String HmtLimitAngle = config.getString("HmtLimitAngle","30");
+		
 //		String PlanName="BatPlan";
-		String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","BatPlan.txt").getPath();
+		String copyToPlanFilePath=new File(acpPlanPath,"BatPlan.txt").getPath();
 		
 		List<Map<String ,String>> paramMap_threadList=new ArrayList<Map<String,String>>();
 			while (true) {
@@ -53,25 +79,27 @@ public class ThreadAcpControl extends Thread {
 						String stringDec=paramMap_thread.get("stringDec");
 //						stringRa="@an"+stringRa;
 //						stringDec="@an"+stringDec;
-						String planName = paramMap_thread.get("planName");
-						planName="\""+planName+"\"";
+//						String planName = paramMap_thread.get("planName");
+//						planName="\""+planName+"\"";
 						
 						
-						Map<String, String> statusMap = AcpStatusUpdater.getSystemStatus();
+						Map<String, String> statusMap = AcpStatusUpdater.getSystemStatus(acpUrl,acpUser,acpPass);
 						String sm_obsStat="";
-						String sm_plnTitle="";
+//						String sm_plnTitle=""; //plan title 在acp5里没有  就考虑用obsOwner 来判定当前是否已经在执行自己的plan
+						String sm_obsOwner="";
 						String sm_az="";
 						String sm_alt="";
 						String sm_ra="";
 						String sm_dec="";
 						try {
 							sm_obsStat = URLDecoder.decode(statusMap.get("sm_obsStat"), "UTF-8");
-							sm_plnTitle = URLDecoder.decode(statusMap.get("sm_plnTitle"), "UTF-8");
+//							sm_plnTitle = URLDecoder.decode(statusMap.get("sm_plnTitle")==null?statusMap.get("sm_plnTitle"):"", "UTF-8"); //acp 5 do not have plan here
+							sm_obsOwner = URLDecoder.decode(statusMap.get("sm_obsOwner"), "UTF-8"); //acp 5 do not have plan here
 							sm_az = URLDecoder.decode(statusMap.get("sm_az"), "UTF-8");
 							sm_alt = URLDecoder.decode(statusMap.get("sm_alt"), "UTF-8");
 							sm_ra = URLDecoder.decode(statusMap.get("sm_ra"), "UTF-8");
 							sm_dec = URLDecoder.decode(statusMap.get("sm_dec"), "UTF-8");
-							System.out.println(">>>>"+statusMap.get("sm_dec"));
+							System.out.println(">>>>"+statusMap.get("sm_obsOwner"));
 						} catch (UnsupportedEncodingException e1) {
 							e1.printStackTrace();
 						}
@@ -80,8 +108,8 @@ public class ThreadAcpControl extends Thread {
 //						System.out.println(""+ sm_plnTitle + "----" + "Plan" + planName +"\t\t--"+ sm_plnTitle.equals("Plan " + planName)+ "--"+sm_obsStat);
 						if (sm_obsStat != null && sm_obsStat.equals("@anIn use")) { //是否是工作状态 @In use   @anReady
 
-							if (sm_plnTitle != null && sm_plnTitle.equals("Plan " + planName)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
-//								System.out.println("-----"+sm_ra+"-x-"+stringRa+"-x-"+sm_dec+"-x-"+stringDec);
+//							if (sm_plnTitle != null && sm_plnTitle.equals("Plan " + planName)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
+							if (sm_obsOwner != null && sm_obsOwner.equals("@an" + acpUser)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
 								System.out.println("收到了后续的BAT消息，继续执行");
 
 //								if (sm_ra != null && sm_dec != null && sm_ra.equals("@an"+stringRa)
@@ -123,7 +151,7 @@ public class ThreadAcpControl extends Thread {
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
-								stopResult = AcpControl.stopRunPlan();
+								stopResult = AcpControl.stopRunPlan(acpUrl,acpUser,acpPass);
 								stopCounter++;
 								if (stopCounter > 10) {
 									break;
@@ -135,25 +163,43 @@ public class ThreadAcpControl extends Thread {
 						System.out.println("-----"+sm_ra+"-x-"+stringRa+"-x-"+sm_dec+"-x-"+stringDec +"\t\t调整HMT 防止撞墙");
 						String scriptPath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "python/test.py").getPath();
 						Process process;
+						String batObjectAltAz="";
 						try {
 							String param1=stringRa; //ra in Degrees
 							String param2=stringDec; //dec
-							process = Runtime.getRuntime().exec("D:\\FileZilla Server\\FTP_Root\\Python27\\python.exe "+ scriptPath +" " + param1+" "+param2 );
+							process = Runtime.getRuntime().exec(python27Path+" "+ scriptPath +" " + param1+" "+param2 );
 							InputStreamReader ir = new InputStreamReader(process.getInputStream());  
 							LineNumberReader input = new LineNumberReader(ir);  
 							String line;  
-							while((line = input.readLine()) != null)  
+							while((line = input.readLine()) != null) 
+								batObjectAltAz=new String(line);
 								System.out.println(line);  
 							input.close();  
-//							ir.close();  
+							ir.close();  
 						
 						} catch (IOException e) {
 						
 							e.printStackTrace();
 						}
-						if (sm_az.equals(sm_dec)) {
-							System.out.println("不要撞墙啊 HMT");
+						String batObjectAltInDegree="";
+						String batObjectAzInDegree="";
+				
+						
+						if (batObjectAltAz!=null&&batObjectAltAz.contains(",")) {
+							batObjectAltInDegree=batObjectAltAz.split(",")[0];
+							batObjectAzInDegree=batObjectAltAz.split(",")[1];
+						}else {
+							System.out.println("Error acp控制程序异常 没有的正确的天顶坐标 "+batObjectAltAz.contains(","));
+							return;
 						}
+						if (Double.parseDouble(batObjectAltInDegree)<Double.parseDouble(HmtLimitAngle)) {
+							System.out.println("HMT  Will Hit The Wall :" +batObjectAltAz);
+							return;
+						}
+						
+//						if (sm_az.equals(sm_dec)) {
+//							System.out.println("不要撞墙啊 HMT");
+//						}
 						//执行plan
 						if (isSendRunPlan) {
 							//stop plan
@@ -165,7 +211,7 @@ public class ThreadAcpControl extends Thread {
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
-								Map<String, String> statusMapBeforeRun = AcpStatusUpdater.getSystemStatus();
+								Map<String, String> statusMapBeforeRun = AcpStatusUpdater.getSystemStatus(acpUrl,acpUser,acpPass);
 								try {
 									sm_obsStatBeforeRun = URLDecoder.decode(statusMapBeforeRun.get("sm_obsStat"), "UTF-8");
 								} catch (UnsupportedEncodingException e) {
@@ -184,39 +230,54 @@ public class ThreadAcpControl extends Thread {
 								double raInDegree=Double.parseDouble(stringRa);
 								double ha= (24*raInDegree)/360;
 								System.out.println(">>>>>>ha>>>>>>>>"+ha);
-								//生成天顶坐标 Ra （ha） Dec(degree)
-								String zenithScriptPath =new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "python/getZenithRaDec.py").getPath();
+								//生成天顶坐标 Ra （ha） Dec(degree)  //现在生成的是东西两个距离子午线5度 高度角50度的点，据说，这两个点到哪都不会撞墙
+								String zenithScriptPath =new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "python/getHmtMegicRaDec.py").getPath();
 								Process zenithProcess;
 								String zenithOutLine="";  
+								String zenithOutLineBuffer="";  
 								try {
 //									String param1=stringRa; //ra in Degrees
 //									String param2=stringDec; //dec
-									zenithProcess = Runtime.getRuntime().exec("D:\\FileZilla Server\\FTP_Root\\Python27\\python.exe "+ zenithScriptPath  );
+									zenithProcess = Runtime.getRuntime().exec(python27Path+" "+ zenithScriptPath  );
 									InputStreamReader ir = new InputStreamReader(zenithProcess.getInputStream());  
 									LineNumberReader input = new LineNumberReader(ir);  
 									while((zenithOutLine = input.readLine()) != null)  
-										System.out.println(zenithOutLine);  
-									input.close();  
-//									ir.close();  
-									
-								
+										zenithOutLineBuffer=new String(zenithOutLine);
+//										System.out.println(zenithOutLine);  
+										input.close();  
+										ir.close();  
+//										System.out.println(zenithOutLineBuffer);
 								} catch (IOException e) {
 								
 									e.printStackTrace();
 								}
 								
-								String zenithRa="";
-								String zenithDec="";
-								if (zenithOutLine!=null&&zenithOutLine.contains(",")) {
-									zenithRa=zenithDec.split(",")[0];
-									zenithDec=zenithDec.split(",")[1];
+								String zenithRaEast="";
+								String zenithDecEast="";
+								String zenithRaWest="";
+								String zenithDecWest="";
+								
+								if (zenithOutLineBuffer!=null&&zenithOutLineBuffer.contains(",")) {
+									zenithRaEast=zenithOutLineBuffer.split(",")[0];
+									zenithDecEast=zenithOutLineBuffer.split(",")[1];
+									zenithRaWest=zenithOutLineBuffer.split(",")[2];
+									zenithDecWest=zenithOutLineBuffer.split(",")[3];
 								}else {
 
-									System.out.println("Error ");
+									System.out.println("Error acp控制程序异常 没有的正确的天顶坐标 "+zenithOutLineBuffer.contains(","));
+									return;
 								}
-								
-								String planString=GenerateAcpPlanString.doGenerateZenithFirst(Double.toString(ha), stringDec, zenithRa, zenithDec);
-								
+								String zenithRa="";
+								String zenithDec="";
+								if (Double.parseDouble(batObjectAzInDegree)>=180) {
+									zenithRa=zenithRaWest;
+									zenithDec=zenithDecWest;
+								}else {
+									zenithRa=zenithRaEast;
+									zenithDec=zenithDecEast;
+								}
+								String planString=GenerateAcpPlanString.doGenerateZenithFirst(Double.toString(ha), stringDec, zenithRa, zenithDec,filter);
+								XML2File.writeToPlan(planString, copyToPlanFilePath);
 								
 							}else {
 								System.out.println("Error ");
@@ -224,30 +285,32 @@ public class ThreadAcpControl extends Thread {
 							
 
 							int statusCheckCounter = 1;
-							String sm_plnTitle_Status = "";
-							while (!(sm_plnTitle_Status != null && sm_plnTitle_Status.equals("Plan " + planName))) {
+//							String sm_plnTitle_Status = "";
+							String sm_obsOwner_Status = "";
+//							while (!(sm_plnTitle_Status != null && sm_plnTitle_Status.equals("Plan " + planName))) {
+							while (!(sm_obsOwner_Status != null && sm_obsOwner_Status.equals("@an" + acpUser))) {
 								try {
 									Thread.sleep(1000);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
 
-								String runPlanResult = AcpControl.runPlan(copyToPlanFilePath);
+								String runPlanResult = AcpControl.runPlan(copyToPlanFilePath,acpUrl,acpUser,acpPass);
 								System.out.println(runPlanResult);
 								try {
 									Thread.sleep(5000);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
-								Map<String, String> statusMapBeforeRun = AcpStatusUpdater.getSystemStatus();
+								Map<String, String> statusMapBeforeRun = AcpStatusUpdater.getSystemStatus(acpUrl,acpUser,acpPass);
 								try {
-									sm_plnTitle_Status = URLDecoder.decode(statusMapBeforeRun.get("sm_plnTitle"), "UTF-8");
+									sm_obsOwner_Status = URLDecoder.decode(statusMapBeforeRun.get("sm_obsOwner"), "UTF-8");
 								} catch (UnsupportedEncodingException e) {
 									e.printStackTrace();
 								}
 //								if (sm_plnTitle_Status != null && sm_plnTitle_Status.equals("Plan \"plan\"")) {
 //								System.out.println(sm_plnTitle_Status+"\t\t"+ "Plan "+planName);
-								if (sm_plnTitle_Status!=null&&sm_plnTitle_Status.equals("Plan "+planName)) {
+								if (sm_obsOwner_Status!=null&&sm_obsOwner_Status.equals("@an"+acpUser)) {
 									break;
 								}
 								statusCheckCounter++;

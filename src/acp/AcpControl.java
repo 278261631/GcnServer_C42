@@ -17,13 +17,14 @@ import org.apache.commons.codec.binary.Base64;
 public class AcpControl {
 
 
-	public static  String runPlan(String filePath) {
+	public static  String runPlan(String filePath,String url,String userName,String userPass) {
 		PrintWriter out = null;
 	        BufferedReader in = null;
 	        String result = "";
 	        try {
 	        	System.out.println( getNowTimeString()+ "准备启动 ");
-	            URL realUrl = new URL("http://192.168.1.130:81/ac/aacqplan.asp");
+//	            URL realUrl = new URL("http://192.168.1.130:81/ac/aacqplan.asp");
+	            URL realUrl = new URL(url+"/ac/aacqplan.asp");
 	            // 打开和URL之间的连接
 	            URLConnection conn = realUrl.openConnection();
 	            
@@ -31,7 +32,7 @@ public class AcpControl {
 	            // 设置通用的请求属性
 	            conn.setRequestProperty("accept", "*/*");
 	            conn.setRequestProperty("connection", "Keep-Alive");
-	            String input = "mayong" + ":" + "mayong";
+	            String input = userName + ":" + userPass;
 	            Base64 base64 = new Base64();
 	            String encoding =  base64.encodeToString(input.getBytes());
 	            conn.setRequestProperty("Authorization", "Basic " + encoding);
@@ -82,18 +83,19 @@ public class AcpControl {
 
 	
 
-	static SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+	static SimpleDateFormat longDateFormatFile = new SimpleDateFormat("yyyy-MM-dd HH mm ss ");
 	public static String getNowTimeString (){
 		return longDateFormatFile.format(new Date()) +" :\t\t";
 	}
-	public static String stopRunPlan() {
+	public static String stopRunPlan(String url,String userName,String userPass) {
 		PrintWriter out = null;
 		BufferedReader in = null;
 		String result = "";
 		try {
 			System.out.println( getNowTimeString()+ "尝试停止 ");
 //			http://192.168.1.130:81/ac/astopscript.asp
-			URL realUrl = new URL("http://192.168.1.130:81/ac/astopscript.asp");
+//			URL realUrl = new URL("http://192.168.1.130:81/ac/astopscript.asp");
+			URL realUrl = new URL(url+"/ac/astopscript.asp");
 			// 打开和URL之间的连接
 			URLConnection conn = realUrl.openConnection();
 			
@@ -101,7 +103,8 @@ public class AcpControl {
 			// 设置通用的请求属性
 			conn.setRequestProperty("accept", "*/*");
 			conn.setRequestProperty("connection", "Keep-Alive");
-			String input = "mayong" + ":" + "mayong";
+//			String input = "mayong" + ":" + "mayong";
+			String input = userName + ":" + userPass;
 			Base64 base64 = new Base64();
 			String encoding =  base64.encodeToString(input.getBytes());
 			conn.setRequestProperty("Authorization", "Basic " + encoding);

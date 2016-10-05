@@ -1,10 +1,16 @@
 package acp;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.builder.fluent.Configurations;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.junit.Test;
+
+import util.XML2File;
 
 public class TestAcpControl {
 	public static void main(String[] args) {
@@ -14,14 +20,50 @@ public class TestAcpControl {
 
 	@org.junit.Test
 	public   void runPlan() {
+		Configurations configs = new Configurations();
+    	Configuration config = null;
+    	try
+    	{
+    	    config = configs.properties(new File("usergui.properties"));
+    	}
+    	catch (ConfigurationException cex)
+    	{
+    	    // Something went wrong
+    		XML2File.writeToLog(cex.getMessage());
+    		cex.printStackTrace();
+    	}
+    	String acpPlanPath = config.getString("acpPlanPath");
+    	String python27Path = config.getString("python27Path");
+    	String acpUrl = config.getString("acpUrl");
+    	String acpUser = config.getString("acpUser");
+    	String acpPass = config.getString("acpPass");
+    	String filter = config.getString("filter","");
 		String filePath="C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/test2.txt";
-		System.out.println( AcpControl.runPlan(filePath));
+		System.out.println( AcpControl.runPlan(filePath,acpUrl,acpUser,acpPass));
 	        
 	}    
 	
 	@org.junit.Test
 	public  void stopRunPlan() {
-		 System.out.println( AcpControl.stopRunPlan());
+		Configurations configs = new Configurations();
+    	Configuration config = null;
+    	try
+    	{
+    	    config = configs.properties(new File("usergui.properties"));
+    	}
+    	catch (ConfigurationException cex)
+    	{
+    	    // Something went wrong
+    		XML2File.writeToLog(cex.getMessage());
+    		cex.printStackTrace();
+    	}
+    	String acpPlanPath = config.getString("acpPlanPath");
+    	String python27Path = config.getString("python27Path");
+    	String acpUrl = config.getString("acpUrl");
+    	String acpUser = config.getString("acpUser");
+    	String acpPass = config.getString("acpPass");
+    	String filter = config.getString("filter","");
+		 System.out.println( AcpControl.stopRunPlan(acpUrl,acpUser,acpPass));
 	}    
 	
 	
@@ -35,7 +77,25 @@ public class TestAcpControl {
 //		String resultString = AcpStatusUpdater.updateSystemStatus();
 //		 System.out.println( resultString);
 //		Map<String, String> resultMap = AcpStatusUpdater.acpResultToMap(resultString);
-		Map<String, String> resultMap = AcpStatusUpdater.getSystemStatus();
+		Configurations configs = new Configurations();
+    	Configuration config = null;
+    	try
+    	{
+    	    config = configs.properties(new File("usergui.properties"));
+    	}
+    	catch (ConfigurationException cex)
+    	{
+    	    // Something went wrong
+    		XML2File.writeToLog(cex.getMessage());
+    		cex.printStackTrace();
+    	}
+    	String acpPlanPath = config.getString("acpPlanPath");
+    	String python27Path = config.getString("python27Path");
+    	String acpUrl = config.getString("acpUrl");
+    	String acpUser = config.getString("acpUser");
+    	String acpPass = config.getString("acpPass");
+    	String filter = config.getString("filter","");
+		Map<String, String> resultMap = AcpStatusUpdater.getSystemStatus(acpUrl,acpUser,acpPass);
 		System.out.println(resultMap.get("sm_obsStat"));
 		System.out.println(resultMap.get("sm_obsStat"));
 		System.out.println(resultMap.get("sm_plnTitle"));

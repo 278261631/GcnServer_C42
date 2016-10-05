@@ -108,7 +108,6 @@ public class GCNServer extends ServerSocket {
             	e.printStackTrace();
             	XML2File.writeToLog(e.getMessage());
             } catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }

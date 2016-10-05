@@ -214,7 +214,7 @@ public class ReadXMLTest {
 //				stringRa="21";
 				
 				String stringDec=config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C2");	
-				System.out.println("RA:   "+stringRa+"   Dec:   "+stringDec);
+				System.out.println(newFileName+"\t\tRA:\t"+stringRa+"\t\tDec:\t"+stringDec);
 				
 //				String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "BatPlan.txt").getPath();
 //				double raInDegree=Double.parseDouble(stringRa);
@@ -228,13 +228,13 @@ public class ReadXMLTest {
 //				XML2File.writeToPlan(planString, copyToPlanFilePath);
 				//判定当前时间和高度 是否需要拍摄
 				//？？？？？？？？？？
-				System.out.println(">>>>>>>>");
+//				System.out.println(">>>>>>>>");
 				synchronized (GCNServer.lock) {
 					MyAcpCommandList.addParam("stringRa", stringRa);
 					MyAcpCommandList.addParam("stringDec", stringDec);
 					MyAcpCommandList.addParam("planName", "BatPlan");
 					GCNServer.lock.notify();
-					System.out.println("<<<<<<<<");
+//					System.out.println("<<<<<<<<");
 				}
 				
 				
@@ -392,13 +392,13 @@ public class ReadXMLTest {
 //			  attachment.setName("John");
 			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
 			
-			String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
-			String planString=GenerateAcpPlanString.doGenerate();
-			XML2File.writeToPlan(planString, planFilePath);
-			File sorcePlanFile = new File(planFilePath);
-			String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","plan.txt").getPath();
-			sorcePlanFile.renameTo(new File(copyToPlanFilePath));
-			AcpControl.runPlan(copyToPlanFilePath);
+//			String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
+//			String planString=GenerateAcpPlanString.doGenerate();
+//			XML2File.writeToPlan(planString, planFilePath);
+//			File sorcePlanFile = new File(planFilePath);
+//			String copyToPlanFilePath=new File("C:/Users/Public/Documents/ACP Web Data/Doc Root/plans/mayong/","plan.txt").getPath();
+//			sorcePlanFile.renameTo(new File(copyToPlanFilePath));
+//			AcpControl.runPlan(copyToPlanFilePath);
 			
 		}
 		
