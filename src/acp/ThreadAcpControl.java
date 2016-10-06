@@ -6,10 +6,16 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.DateFormat.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
@@ -48,12 +54,50 @@ public class ThreadAcpControl extends Thread {
     	String acpPass = config.getString("acpPass");
     	String filter = config.getString("filter","");
     	String HmtLimitAngle = config.getString("HmtLimitAngle","30");
-		
+    	String HMTlastPlanDir = config.getString("HMTlastPlanDir","");
+    	boolean isUseAcpControl = config.getBoolean("isUseAcpControl", false);
+    	int updateConfigMinute = config.getInt("updateConfigMinute", 1);
+    	
 //		String PlanName="BatPlan";
 		String copyToPlanFilePath=new File(acpPlanPath,"BatPlan.txt").getPath();
 		
 		List<Map<String ,String>> paramMap_threadList=new ArrayList<Map<String,String>>();
+		SimpleDateFormat updateConfigDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Calendar lastUpdateConfigTime=Calendar.getInstance(); 
 			while (true) {
+				String updateConfigTime=updateConfigDateFormat.format(new Date());
+				Calendar nowConfigTime=Calendar.getInstance(); 
+				nowConfigTime.add(Calendar.MINUTE, -1*updateConfigMinute);
+//				System.out.println(updateConfigDateFormat.format(lastUpdateConfigTime.getTime()));
+				if (lastUpdateConfigTime.before(nowConfigTime)) {
+					lastUpdateConfigTime=Calendar.getInstance();
+			    	System.out.println("更新ACP control配置  : "+updateConfigDateFormat.format(new Date()));
+					try {
+						config = configs.properties(new File("usergui.properties"));
+					} catch (ConfigurationException e) {
+						e.printStackTrace();
+					}
+			    	 acpPlanPath = config.getString("acpPlanPath");
+			    	 python27Path = config.getString("python27Path");
+			    	 acpUrl = config.getString("acpUrl");
+			    	 acpUser = config.getString("acpUser");
+			    	 acpPass = config.getString("acpPass");
+			    	 filter = config.getString("filter","");
+			    	 HmtLimitAngle = config.getString("HmtLimitAngle","30");
+			    	 HMTlastPlanDir = config.getString("HMTlastPlanDir","");
+			    	 isUseAcpControl = config.getBoolean("isUseAcpControl", false);
+			    	 updateConfigMinute = config.getInt("updateConfigMinute", 1);
+			    	 System.out.println("isUseAcpControl : "+isUseAcpControl);
+				}
+				
+					if (!isUseAcpControl) {
+						try {
+							Thread.sleep(10000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} 
+						continue;
+					}
 					synchronized (lock) {
 //						System.out.println("ACP 控制线程：  我也还活着 " +MyAcpCommandList.getParamMap().size());	
 						
@@ -140,7 +184,8 @@ public class ThreadAcpControl extends Thread {
 							}
 						}
 						
-						System.out.println("isRun\t\t"+isSendRunPlan + "\t\tisStop\t\t" + isSendStopPlan);
+						System.out.println("isRun = "+isSendRunPlan + "\t\t isStop = " + isSendStopPlan);
+						String HMTlastPlanFilePath="";
 						if (isSendStopPlan) {
 							//stop plan
 							int stopCounter = 1;
@@ -157,6 +202,21 @@ public class ThreadAcpControl extends Thread {
 									break;
 								}
 							}
+							
+							//获取刚刚被停止掉的plan路径 
+							File lastPlanDir=new File(HMTlastPlanDir);
+							if (lastPlanDir.isDirectory()&&lastPlanDir.exists()) {
+								System.out.println(HMTlastPlanDir);
+								File[] planFiles=lastPlanDir.listFiles();
+								long lastModifyTime=0;
+								for (File file : planFiles) {
+									if (file.isFile()&&file.getName().toLowerCase().endsWith(".txt")&&file.lastModified()>lastModifyTime) {
+										lastModifyTime=file.lastModified();
+										HMTlastPlanFilePath=file.getAbsolutePath();
+									}
+								}
+							}
+							
 
 						}
 						//这里是 手动 操作望远镜 转向 ，因为撞墙的问题 >_< 
@@ -168,12 +228,13 @@ public class ThreadAcpControl extends Thread {
 							String param1=stringRa; //ra in Degrees
 							String param2=stringDec; //dec
 							process = Runtime.getRuntime().exec(python27Path+" "+ scriptPath +" " + param1+" "+param2 );
+							System.out.println(python27Path+" "+ scriptPath +" " + param1+" "+param2 );
 							InputStreamReader ir = new InputStreamReader(process.getInputStream());  
 							LineNumberReader input = new LineNumberReader(ir);  
 							String line;  
 							while((line = input.readLine()) != null) 
 								batObjectAltAz=new String(line);
-								System.out.println(line);  
+//								System.out.println(line);  
 							input.close();  
 							ir.close();  
 						
@@ -184,12 +245,13 @@ public class ThreadAcpControl extends Thread {
 						String batObjectAltInDegree="";
 						String batObjectAzInDegree="";
 				
-						
+						System.out.println(""+batObjectAltAz);
 						if (batObjectAltAz!=null&&batObjectAltAz.contains(",")) {
 							batObjectAltInDegree=batObjectAltAz.split(",")[0];
 							batObjectAzInDegree=batObjectAltAz.split(",")[1];
 						}else {
-							System.out.println("Error acp控制程序异常 没有的正确的天顶坐标 "+batObjectAltAz.contains(","));
+							System.out.println("Error  call python  tranFormer.equatorial_to_horizontal  "+batObjectAltAz.contains(","));
+						
 							return;
 						}
 						if (Double.parseDouble(batObjectAltInDegree)<Double.parseDouble(HmtLimitAngle)) {
@@ -239,6 +301,7 @@ public class ThreadAcpControl extends Thread {
 //									String param1=stringRa; //ra in Degrees
 //									String param2=stringDec; //dec
 									zenithProcess = Runtime.getRuntime().exec(python27Path+" "+ zenithScriptPath  );
+									System.out.println(python27Path+" "+ zenithScriptPath  );
 									InputStreamReader ir = new InputStreamReader(zenithProcess.getInputStream());  
 									LineNumberReader input = new LineNumberReader(ir);  
 									while((zenithOutLine = input.readLine()) != null)  
@@ -256,7 +319,7 @@ public class ThreadAcpControl extends Thread {
 								String zenithDecEast="";
 								String zenithRaWest="";
 								String zenithDecWest="";
-								
+								System.out.println("python: HMT east and west point  : "+zenithOutLineBuffer);
 								if (zenithOutLineBuffer!=null&&zenithOutLineBuffer.contains(",")) {
 									zenithRaEast=zenithOutLineBuffer.split(",")[0];
 									zenithDecEast=zenithOutLineBuffer.split(",")[1];
@@ -276,7 +339,7 @@ public class ThreadAcpControl extends Thread {
 									zenithRa=zenithRaEast;
 									zenithDec=zenithDecEast;
 								}
-								String planString=GenerateAcpPlanString.doGenerateZenithFirst(Double.toString(ha), stringDec, zenithRa, zenithDec,filter);
+								String planString=GenerateAcpPlanString.doGenerateZenithFirst(Double.toString(ha), stringDec, zenithRa, zenithDec,filter,HMTlastPlanFilePath);
 								XML2File.writeToPlan(planString, copyToPlanFilePath);
 								
 							}else {

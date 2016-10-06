@@ -30,7 +30,8 @@ decInRadians=math.radians(numpy.float(decIndegrees));
 # print 'Ra In Radians    ' +repr(raInRadians)
 # print 'Dec In Radians    '+ repr(decInRadians)
 # hor = tranFormer.equatorial_to_horizontal(43.8, 87.5, time.time(), raInDegrees,decIndegrees) #sun
-hor = tranFormer.equatorial_to_horizontal(43.8, 87.5, time.time(), raInRadians,decInRadians) #sun
+# hor = tranFormer.equatorial_to_horizontal(43.8, 87.5, time.time(), raInRadians,decInRadians) #sun
+hor = tranFormer.equatorial_to_horizontal(43.4710372, 87.1775888, time.time(), raInRadians,decInRadians) #sun
 # hor = tranFormer.equatorial_to_horizontal(43.8, 87.5, time.time(), 285.6, 18) #moon
 
 

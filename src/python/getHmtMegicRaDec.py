@@ -19,12 +19,12 @@ import clock
 # raInRadians=math.radians(numpy.float(raInDegrees));
 # decInRadians=math.radians(numpy.float(decIndegrees));
 # hor = tranFormer.equatorial_to_horizontal(43.8, 87.5, time.time(), raInRadians,decInRadians) #sun
-lst = clock.gps_to_lst(time.time(), 87.5)
-altitudeInDeg=50
+lst = clock.gps_to_lst(time.time(), 87.1775888)
+altitudeInDeg=40
 azimuthIndeg_east=175
 azimuthIndeg_west=185
-eastRa,eastDec = tranFormer.horizontal_to_equatorial(43.8, lst, math.radians(numpy.float(altitudeInDeg)), math.radians(numpy.float(azimuthIndeg_east)))
-westRa,westDec = tranFormer.horizontal_to_equatorial(43.8, lst, math.radians(numpy.float(altitudeInDeg)), math.radians(numpy.float(azimuthIndeg_west)))
+eastRa,eastDec = tranFormer.horizontal_to_equatorial(43.4710372, lst, math.radians(numpy.float(altitudeInDeg)), math.radians(numpy.float(azimuthIndeg_east)))
+westRa,westDec = tranFormer.horizontal_to_equatorial(43.4710372, lst, math.radians(numpy.float(altitudeInDeg)), math.radians(numpy.float(azimuthIndeg_west)))
 
 
 
