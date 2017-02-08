@@ -18,11 +18,11 @@ import util.TestSendEmail;
 import util.XML2File;
 
 public class GCNServer extends ServerSocket {
-    private static final int SERVER_PORT = 5348;
+    private static int SERVER_PORT = 5348;
 	private static GCNServer gcnServer;
 
-    public GCNServer() throws IOException  {
-        super(SERVER_PORT);
+    public GCNServer(int SERVER_PORT_param) throws IOException  {
+        super(SERVER_PORT_param);
 
         try {
             while (true) {
@@ -72,7 +72,18 @@ public class GCNServer extends ServerSocket {
 //        	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         	((AbstractConfiguration) config).setListDelimiterHandler(new DefaultListDelimiterHandler(','));
         	String outRootDir=config.getString("outXmlRootDir",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "),"outDir").getPath());
+        	SERVER_PORT=config.getInt("SERVER_PORT" , 5348);
+        	System.out.println("SERVER_PORT : " +SERVER_PORT);
         	String tempFilePath=config.getString("tempFilePath",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "temp.xml").getPath());
+        	boolean isUseAcpControl = config.getBoolean("isUseAcpControl", false);
+        	String acpPlanPath = config.getString("acpPlanPath");
+        	String python27Path = config.getString("python27Path");
+        	String acpUrl = config.getString("acpUrl");
+        	String acpUser = config.getString("acpUser");
+        	String acpPass = config.getString("acpPass");
+        	String filter = config.getString("filter","");
+        	String HmtLimitAngle = config.getString("HmtLimitAngle","30");
+        	String HMTlastPlanDir = config.getString("HMTlastPlanDir","");
 //        	String[] emails=config.getStringArray("emails");//"278261631@qq.com"
         	String emailString=config.getString("emails");//"278261631@qq.com"
         	String[] emails=emailString.split(",");
@@ -84,6 +95,15 @@ public class GCNServer extends ServerSocket {
 //        	String errorLogFile=config.getString("errorLogFile",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), longDateFormat.format(new Date())+".log").getPath());
       	    System.out.println("tempFilePath : "  + tempFilePath);  
     	    System.out.println("outXmlRootDir : "  + outRootDir);  
+    	    System.out.println("isUseAcpControl : "+isUseAcpControl);
+    	    System.out.println("acpPlanPath : "+acpPlanPath);
+    	    System.out.println("HMTlastPlanDir : "+HMTlastPlanDir);
+    	    System.out.println("python27Path : "+python27Path);
+    	    System.out.println("acpUrl : "+acpUrl);
+    	    System.out.println("acpUser : "+acpUser);
+    	    System.out.println("acpPass : "+acpPass);
+    	    System.out.println("filter : "+filter);
+    	    System.out.println("HmtLimitAngle : "+HmtLimitAngle);
     		File dirFile=new File(outRootDir);
     		if (!dirFile.exists()) {
     			dirFile.mkdirs();
@@ -116,10 +136,24 @@ public class GCNServer extends ServerSocket {
     public static Object lock = new Object();
     public static void main(String[] args) throws IOException {
     	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-    	System.out.println("Server V20160914.1  Start  : "+longDateFormat.format(new Date()));
+    	System.out.println("Server V20161007.1  Start  : "+longDateFormat.format(new Date()));
+    	Configurations configs = new Configurations();
+    	Configuration config = null;
+    	
+    	try
+    	{
+    		config = configs.properties(new File("usergui.properties"));
+    	}
+    	catch (ConfigurationException cex)
+    	{
+    		// Something went wrong
+    		XML2File.writeToLog(cex.getMessage());
+    		cex.printStackTrace();
+    	}
+    	SERVER_PORT=config.getInt("SERVER_PORT" , 5348);
     	ThreadAcpControl a = new ThreadAcpControl(lock);
     	a.start();
-        setGcnServer(new GCNServer());
+        setGcnServer(new GCNServer(SERVER_PORT));
         
         //run in windows command demo :
 //        # ####copy *.jar lib/*.jar files to java/jre/lib/ext 

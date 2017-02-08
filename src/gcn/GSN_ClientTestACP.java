@@ -38,6 +38,8 @@ public class GSN_ClientTestACP {
 //        	SimpleDateFormat shortDateFormat = new SimpleDateFormat("yyyyMMdd");
 //        	SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         	((AbstractConfiguration) config).setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+         	int SERVER_PORT=config.getInt("SERVER_PORT" , 5348);
+        	System.out.println("SERVER_PORT : " +SERVER_PORT);
             Socket socket = new Socket("127.0.0.1", 5348);
            
             socket.setSoTimeout(600000);

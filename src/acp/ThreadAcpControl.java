@@ -62,7 +62,7 @@ public class ThreadAcpControl extends Thread {
 		String copyToPlanFilePath=new File(acpPlanPath,"BatPlan.txt").getPath();
 		
 		List<Map<String ,String>> paramMap_threadList=new ArrayList<Map<String,String>>();
-		SimpleDateFormat updateConfigDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat updateConfigDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
 		Calendar lastUpdateConfigTime=Calendar.getInstance(); 
 			while (true) {
 				String updateConfigTime=updateConfigDateFormat.format(new Date());
@@ -87,11 +87,12 @@ public class ThreadAcpControl extends Thread {
 			    	 HMTlastPlanDir = config.getString("HMTlastPlanDir","");
 			    	 isUseAcpControl = config.getBoolean("isUseAcpControl", false);
 			    	 updateConfigMinute = config.getInt("updateConfigMinute", 1);
-			    	 System.out.println("isUseAcpControl : "+isUseAcpControl);
+			    	 System.out.println("  ACP control not used ,see config file > isUseAcpControl : "+isUseAcpControl);
 				}
 				
 					if (!isUseAcpControl) {
 						try {
+//							 System.out.println(" ACP control not used ,see config file >  isUseAcpControl : "+isUseAcpControl);
 							Thread.sleep(10000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -152,7 +153,10 @@ public class ThreadAcpControl extends Thread {
 //						System.out.println(""+ sm_plnTitle + "----" + "Plan" + planName +"\t\t--"+ sm_plnTitle.equals("Plan " + planName)+ "--"+sm_obsStat);
 						if (sm_obsStat != null && sm_obsStat.equals("@anIn use")) { //是否是工作状态 @In use   @anReady
 
-//							if (sm_plnTitle != null && sm_plnTitle.equals("Plan " + planName)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
+//							if (sm_plnTitle != null && sm_plnTitle.equals("Plan " + planName)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan //planName不支持 acp 5.x
+							//这里存在一个再次唤醒的问题，如果我执行完一个bat任务之后 挂上了之前的任务，那么
+							//这个任务的执行者还是bat用户，就不会被后续的bat任务停止掉
+							//可能需要一个新的方法判断bat任务是否正在被执行 比如文件写入 或者增加一个识别状态字段 isBatPlanRunning
 							if (sm_obsOwner != null && sm_obsOwner.equals("@an" + acpUser)) { //是否是因为BAT启动plan  Plan%20%22test2%22 Plan
 								System.out.println("收到了后续的BAT消息，继续执行");
 
@@ -267,6 +271,7 @@ public class ThreadAcpControl extends Thread {
 							//stop plan
 							int statusCounter = 1;
 							String sm_obsStatBeforeRun = "";
+							String sm_obsStat_azBeforeRun = "";
 							while (!(sm_obsStatBeforeRun != null && sm_obsStatBeforeRun.equals("@anReady"))) {
 								try {
 									Thread.sleep(2000);
@@ -276,6 +281,7 @@ public class ThreadAcpControl extends Thread {
 								Map<String, String> statusMapBeforeRun = AcpStatusUpdater.getSystemStatus(acpUrl,acpUser,acpPass);
 								try {
 									sm_obsStatBeforeRun = URLDecoder.decode(statusMapBeforeRun.get("sm_obsStat"), "UTF-8");
+									sm_obsStat_azBeforeRun= URLDecoder.decode(statusMap.get("sm_az"), "UTF-8"); // 
 								} catch (UnsupportedEncodingException e) {
 									e.printStackTrace();
 								}
@@ -332,7 +338,16 @@ public class ThreadAcpControl extends Thread {
 								}
 								String zenithRa="";
 								String zenithDec="";
-								if (Double.parseDouble(batObjectAzInDegree)>=180) {
+//								if (Double.parseDouble(batObjectAzInDegree)>=180) { //这里是按照目标的对应位置判断 应该按照当前赤道仪的指向判断
+								double sm_obsStat_azBeforeRun_double ;
+								try {
+									sm_obsStat_azBeforeRun_double= Double.parseDouble(sm_obsStat_azBeforeRun);
+								} catch (Exception e) {
+									e.printStackTrace();
+									System.out.println("读取赤道仪方向错误 sm_obsStat_azBeforeRun>>"+sm_obsStat_azBeforeRun+"<<");
+									return ;
+								}
+								if (sm_obsStat_azBeforeRun_double>=180) {
 									zenithRa=zenithRaWest;
 									zenithDec=zenithDecWest;
 								}else {
@@ -341,6 +356,13 @@ public class ThreadAcpControl extends Thread {
 								}
 								String planString=GenerateAcpPlanString.doGenerateZenithFirst(Double.toString(ha), stringDec, zenithRa, zenithDec,filter,HMTlastPlanFilePath);
 								XML2File.writeToPlan(planString, copyToPlanFilePath);
+								String BatPlanHistory=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "),"BatPlanHistory").getPath();
+					    		File dirFile=new File(BatPlanHistory);
+					    		if (!dirFile.exists()) {
+					    			dirFile.mkdirs();
+					    		}
+					    		BatPlanHistory = new File(BatPlanHistory , "BatPlan" + updateConfigDateFormat.format(new Date()) ).getPath();
+					    		XML2File.writeToPlan(planString, BatPlanHistory);
 								
 							}else {
 								System.out.println("Error ");
