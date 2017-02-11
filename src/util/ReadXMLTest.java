@@ -18,6 +18,7 @@ import acp.AcpStatusUpdater;
 import acp.GenerateAcpPlanString;
 import acp.MyAcpCommandList;
 import gcn.GCNServer;
+import gcn.GcnMailNoticeConverter;
 
 
 
@@ -200,7 +201,8 @@ public class ReadXMLTest {
 			subFolderName="Swift"; //or maybe you can get name from IVORN
 			System.out.println(longDateFormat.format(new Date())+"    Swift");
 			if (newFileName.toUpperCase().startsWith("BAT")) { //Swift_BAT_*的事件发送email
-				String messageContent=XML2File.readLogToString(filePath);
+//				String messageContent=XML2File.readLogToString(filePath);
+				String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice(config, subFolderName);
 //				  EmailAttachment attachment = new EmailAttachment();
 //				  attachment.setPath(filePath);
 //				  attachment.setDisposition(EmailAttachment.ATTACHMENT);
@@ -374,8 +376,14 @@ public class ReadXMLTest {
 		if (PacketType==149) {				
 			subFolderName="SNEWS";
 			System.out.println(longDateFormat.format(new Date())+"    SNEWS");
-			String messageContent=XML2File.readLogToString(filePath);
-			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+//			String messageContent=XML2File.readLogToString(filePath);
+			String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice(config, subFolderName);
+			String messageXmlContent=XML2File.readLogToString(filePath);
+			messageXmlContent="<pre>"+messageXmlContent.replace(">", "&gt;").replace("<", "&lt;")+"</pre>";
+			messageContent=messageContent+"\r\n\r\n\r\n"+messageXmlContent;
+			
+//			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+			TestSendEmail.sendToHtmlEmails( "C42 : "+newFileName,emails,messageContent);
 		}
 		//AMON_ICECUBE_COINC			158	AMON_ICECUBE_HESE   AMON_ICECUBE_EHE
 		if (PacketType==157||PacketType==158

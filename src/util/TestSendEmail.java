@@ -1,3 +1,5 @@
+package util;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,6 +16,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.SimpleEmail;
 
 public class TestSendEmail {
@@ -29,8 +32,8 @@ public class TestSendEmail {
 //			email.setFrom("xxxxx@163.com");
 //			email.setSubject("TestMail");
 //			email.setMsg("This is a test mail ... :-)");
-//			email.addTo("mars.maya.g@gmail.com");
-//			email.addTo("xxxxxxx@qq.com");
+//			email.addTo("xxxx@gmail.com");
+//			email.addTo("xxxxx@qq.com");
 //			email.send();
 //			
 //		} catch (EmailException e) {
@@ -99,22 +102,55 @@ public class TestSendEmail {
 	public static SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 	public static boolean sendToEmails(String subjectString, String[] emails, String contentString) {
 		Email email = new SimpleEmail();
+		email.setCharset("UTF-8");
 		email.setHostName("smtp.163.com");
 		email.setSmtpPort(465);
 		//密码是pai(10)a
-		email.setAuthenticator(new DefaultAuthenticator("c42123email", "31234123141591232654a")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
+		email.setAuthenticator(new DefaultAuthenticator("---------", "------")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
 		email.setSSLOnConnect(true);
 		try {
-			email.setFrom("123123@163.com");
+			email.setFrom("-----@163.com");
 			email.setSubject(subjectString);
 			email.setMsg(contentString);
 			if (emails==null||emails.length<1) {
-				email.addTo("xxxxx@qq.com");
+				email.addTo("278261631@qq.com");
 				email.setMsg("C42 : email 地址为空"+emails);
 			}else {				
 				email.addTo(emails);
 			}
 //			email.addTo("mars.maya.g@gmail.com");
+			
+			System.out.println(longDateFormat.format(new Date())+"   sending email :"+email.getToAddresses()+"\t"+email.getSubject());
+			email.send();
+			
+		} catch (EmailException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
+	}
+	
+	public static boolean sendToHtmlEmails(String subjectString, String[] emails, String contentString) {
+		HtmlEmail email = new HtmlEmail();
+		email.setCharset("UTF-8");
+		email.setHostName("smtp.163.com");
+		email.setSmtpPort(465);
+		//密码是pai(10)a
+		email.setAuthenticator(new DefaultAuthenticator("-----------", "------")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
+		email.setSSLOnConnect(true);
+		try {
+			email.setFrom("-------@163.com");
+			email.setSubject(subjectString);
+			email.setHtmlMsg(contentString);
+			if (emails==null||emails.length<1) {
+				email.addTo("278261631@qq.com");
+				email.setMsg("C42 : email 地址为空"+emails);
+			}else {				
+				email.addTo(emails);
+			}
+
 			
 			System.out.println(longDateFormat.format(new Date())+"   sending email :"+email.getToAddresses()+"\t"+email.getSubject());
 			email.send();
