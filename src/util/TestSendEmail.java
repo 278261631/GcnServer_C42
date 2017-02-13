@@ -106,10 +106,10 @@ public class TestSendEmail {
 		email.setHostName("smtp.163.com");
 		email.setSmtpPort(465);
 		//密码是pai(10)a
-		email.setAuthenticator(new DefaultAuthenticator("---------", "------")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
+		email.setAuthenticator(new DefaultAuthenticator("c42email", "--")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
 		email.setSSLOnConnect(true);
 		try {
-			email.setFrom("-----@163.com");
+			email.setFrom("c42email@163.com");
 			email.setSubject(subjectString);
 			email.setMsg(contentString);
 			if (emails==null||emails.length<1) {
@@ -138,10 +138,10 @@ public class TestSendEmail {
 		email.setHostName("smtp.163.com");
 		email.setSmtpPort(465);
 		//密码是pai(10)a
-		email.setAuthenticator(new DefaultAuthenticator("-----------", "------")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
+		email.setAuthenticator(new DefaultAuthenticator("c42email", "--")); //这里是163的客户端登录授权码 不是登录163邮箱的密码
 		email.setSSLOnConnect(true);
 		try {
-			email.setFrom("-------@163.com");
+			email.setFrom("c42email@163.com");
 			email.setSubject(subjectString);
 			email.setHtmlMsg(contentString);
 			if (emails==null||emails.length<1) {

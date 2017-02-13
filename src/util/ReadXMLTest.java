@@ -202,13 +202,17 @@ public class ReadXMLTest {
 			System.out.println(longDateFormat.format(new Date())+"    Swift");
 			if (newFileName.toUpperCase().startsWith("BAT")) { //Swift_BAT_*的事件发送email
 //				String messageContent=XML2File.readLogToString(filePath);
-				String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice(config, subFolderName);
+				String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice_All(config, subFolderName, PacketType, filePath);
+//				String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice_Swift_Alert(config, subFolderName,PacketType);
 //				  EmailAttachment attachment = new EmailAttachment();
 //				  attachment.setPath(filePath);
 //				  attachment.setDisposition(EmailAttachment.ATTACHMENT);
 //				  attachment.setDescription(newFileName);
 //				  attachment.setName("John");
-				TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+//				String messageXmlContent=XML2File.readLogToString(filePath);
+//				messageXmlContent="<pre>"+messageXmlContent.replace(">", "&gt;").replace("<", "&lt;")+"</pre>";
+//				messageContent=messageContent+"\r\n\r\n\r\n"+messageXmlContent;
+				TestSendEmail.sendToHtmlEmails( "C42 : "+newFileName,emails,messageContent);
 				
 				String stringRa = config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C1");
 				
@@ -377,10 +381,11 @@ public class ReadXMLTest {
 			subFolderName="SNEWS";
 			System.out.println(longDateFormat.format(new Date())+"    SNEWS");
 //			String messageContent=XML2File.readLogToString(filePath);
-			String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice(config, subFolderName);
-			String messageXmlContent=XML2File.readLogToString(filePath);
-			messageXmlContent="<pre>"+messageXmlContent.replace(">", "&gt;").replace("<", "&lt;")+"</pre>";
-			messageContent=messageContent+"\r\n\r\n\r\n"+messageXmlContent;
+			String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice_All(config, subFolderName, PacketType, filePath);
+//			String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice(config, subFolderName);
+//			String messageXmlContent=XML2File.readLogToString(filePath);
+////			messageXmlContent="<pre>"+messageXmlContent.replace(">", "&gt;").replace("<", "&lt;")+"</pre>";
+//			messageContent=messageContent+"\r\n\r\n\r\n"+messageXmlContent;
 			
 //			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
 			TestSendEmail.sendToHtmlEmails( "C42 : "+newFileName,emails,messageContent);
