@@ -510,6 +510,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 		}
 
 		String COMMENTS_1 = "部分信息可能不是从XML中获取到的";
@@ -628,6 +629,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 		}
 		
 		String COMMENTS_1 = "部分信息可能不是从XML中获取到的";
@@ -676,9 +678,9 @@ public class GcnMailNoticeConverter {
 		
 //		gcnNoticeStringBuilder.append(getTJD_SOD(whatNameList,whatValueList));
 		
-		gcnNoticeStringBuilder.append("TRIGGER_INDEX:").append(Tab3append).append(Trig_Index).append(NewLineAppend);
-		gcnNoticeStringBuilder.append("Rate_Signif  :").append(Tab3append).append(Rate_Signif).append(NewLineAppend);
-		gcnNoticeStringBuilder.append("COMMENTS     :").append(Tab3append).append(COMMENTS_1).append(NewLineAppend);
+//		gcnNoticeStringBuilder.append("TRIGGER_INDEX:").append(Tab3append).append(Trig_Index).append(NewLineAppend);
+//		gcnNoticeStringBuilder.append("Rate_Signif  :").append(Tab3append).append(Rate_Signif).append(NewLineAppend);
+//		gcnNoticeStringBuilder.append("COMMENTS     :").append(Tab3append).append(COMMENTS_1).append(NewLineAppend);
 //		gcnNoticeStringBuilder.append("北京时间:").append(Tab3append).append("__").append(NewLineAppend);
 		gcnNoticeStringBuilder.append(slashSep).append(NewLineAppend);
 		gcnNoticeStringBuilder.append(preEnd);
@@ -741,6 +743,7 @@ public class GcnMailNoticeConverter {
 			EVENT_TIME[0] ="--Error--";
 			EVENT_TIME[1] ="--Error--";
 			EVENT_TIME[2] ="--Error--";
+			XML2File.writeToLog(e.getMessage());
 		}
 		return EVENT_TIME;
 	}
@@ -792,6 +795,7 @@ public class GcnMailNoticeConverter {
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 	}
@@ -801,6 +805,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 
@@ -814,6 +819,7 @@ public class GcnMailNoticeConverter {
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 		
@@ -824,6 +830,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 	}
@@ -834,6 +841,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 	}
@@ -845,6 +853,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 	}
@@ -856,6 +865,7 @@ public class GcnMailNoticeConverter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			XML2File.writeToLog(e.getMessage());
 			return "--";
 		}
 		

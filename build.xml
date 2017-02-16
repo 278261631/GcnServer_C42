@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project SocketClient with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
+    <!--ANT 1.7 is required-->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="C:/Users/Administrator/Desktop"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/C42GcnTestServerAcp.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="gcn.GCNServer"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ dsn.jar imap.jar mail.jar mailapi.jar pop3.jar smtp.jar commons-codec-1.10.jar hamcrest-core-1.3.jar junit-4.12.jar commons-beanutils-1.9.2.jar commons-configuration2-2.0.jar commons-email-1.4.jar commons-lang3-3.4.jar commons-logging-1.2.jar jna-4.2.2.jar jna-platform-4.2.2.jar joda-time-2.9.7.jar AstroLib.jar jscience.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="${dir.buildfile}/bin"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="dsn.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="imap.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="mail.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="mailapi.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="pop3.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="smtp.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-codec-1.10.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="hamcrest-core-1.3.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="junit-4.12.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-beanutils-1.9.2.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-configuration2-2.0.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-email-1.4.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-lang3-3.4.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="commons-logging-1.2.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="jna-4.2.2.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="jna-platform-4.2.2.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="joda-time-2.9.7.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="AstroLib.jar"/>
+            <zipfileset dir="${dir.buildfile}/src/lib" includes="jscience.jar"/>
+        </jar>
+    </target>
+</project>
