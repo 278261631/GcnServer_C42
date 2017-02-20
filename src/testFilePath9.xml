@@ -1,0 +1,116 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<voe:VOEvent
+      ivorn="ivo://nasa.gsfc.gcn/SWIFT#XRT_Proc_Image_720568-326"
+      role="observation" version="2.0"
+      xmlns:voe="http://www.ivoa.net/xml/VOEvent/v2.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0  http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd" >
+  <Who>
+    <AuthorIVORN>ivo://nasa.gsfc.tan/gcn</AuthorIVORN>
+    <Author>
+      <shortName>VO-GCN</shortName>
+      <contactName>Scott Barthelmy</contactName>
+      <contactPhone>+1-301-286-3106</contactPhone>
+      <contactEmail>scott.barthelmy@nasa.gov</contactEmail>
+    </Author>
+    <Date>2016-11-04T09:44:24</Date>
+    <Description>This VOEvent message was created with GCN VOE version: 1.19 28oct16</Description>
+  </Who>
+  <What>
+    <Param name="Packet_Type"   value="78" />
+    <Param name="Pkt_Ser_Num"   value="1" />
+    <Param name="TrigID"        value="720568" ucd="meta.id" />
+    <Param name="Segment_Num"   value="0" ucd="meta.id.part" />
+    <Param name="SpecStart_TJD" value="17696" unit="days" ucd="time.start" />
+    <Param name="SpecStart_SOD" value="35004.98" unit="sec" ucd="time.end" />
+    <Param name="Expo_Time"     value="2.50" unit="sec" ucd="time" />
+    <Param name="N_Bright_Pix"  value="84" unit="cts" />
+    <Param name="Cent_Std_Dev"  value="13" unit="sigma" ucd="stat.snr" />
+    <Param name="Cent_X"        value="482.68" unit="pixel" />
+    <Param name="Cent_Y"        value="132.31" unit="pixel" />
+    <Param name="Iraw_X"        value="483" unit="pixel" />
+    <Param name="Iraw_Y"        value="132" unit="pixel" />
+    <Param name="GRB_in_XRT_X"  value="-39010" unit="pixel" />
+    <Param name="GRB_in_XRT_Y"  value="41814" unit="pixel" />
+    <Param name="Image_roll"    value="142.13" unit="deg" />
+    <Param name="Gain"          value="1" unit="pixel" />
+    <Param name="Mode"          value="3" unit="pixel" />
+    <Param name="Waveform"      value="134" unit="pixel" />
+    <Param name="Misc_flags"    value="0x400" />
+    <Group name="Misc_Flags" >
+      <Param name="Values_Out_of_Range"     value="false" />
+      <Param name="Target_in_Blk_Catalog"   value="false" />
+      <Param name="Near_Bright_Star"        value="false" />
+      <Param name="Err_Circle_in_Galaxy"    value="false" />
+      <Param name="Galaxy_in_Err_Circle"    value="false" />
+      <Param name="ImTrig_during_ST_LoL"    value="false" />
+      <Param name="TOO_Generated"           value="false" />
+      <Param name="Pkt_3_of_3_missing"      value="false" />
+      <Param name="Pkt_2_of_3_missing"      value="false" />
+      <Param name="Pkt_1_of_3_missing"      value="false" />
+      <Param name="WatchDog_timer_expired"  value="false" />
+      <Param name="Flt_Generated"           value="true" />
+      <Param name="Gnd_Generated"           value="false" />
+      <Param name="CRC_Error"               value="false" />
+    </Group>
+    <Param name="Image" value="http://gcn.gsfc.nasa.gov/gcn/notices_s/sw00720568000msxps_rw.img" ucd="meta.ref.url" />
+    <Param name="Coords_Type"   value="1" unit="dn" />
+    <Param name="Coords_String" value="source_object" />
+    <Group name="Obs_Support_Info" >
+      <Description>The Sun and Moon values are valid at the time the VOEvent XML message was created.</Description>
+      <Param name="Sun_RA"        value="219.96" unit="deg" ucd="pos.eq.ra" />
+      <Param name="Sun_Dec"       value="-15.56" unit="deg" ucd="pos.eq.dec" />
+      <Param name="Sun_Distance"  value="105.40" unit="deg" ucd="pos.angDistance" />
+      <Param name="Sun_Hr_Angle"  value="9.48" unit="hr" />
+      <Param name="Moon_RA"       value="273.67" unit="deg" ucd="pos.eq.ra" />
+      <Param name="Moon_Dec"      value="-18.74" unit="deg" ucd="pos.eq.dec" />
+      <Param name="MOON_Distance" value="108.49" unit="deg" ucd="pos.angDistance" />
+      <Param name="Moon_Illum"    value="18.56" unit="%" ucd="arith.ratio" />
+      <Param name="Galactic_Long" value="258.45" unit="deg" ucd="pos.galactic.lon" />
+      <Param name="Galactic_Lat"  value="-36.38" unit="deg" ucd="pos.galactic.lat" />
+      <Param name="Ecliptic_Long" value="61.67" unit="deg" ucd="pos.ecliptic.lon" />
+      <Param name="Ecliptic_Lat"  value="-73.64" unit="deg" ucd="pos.ecliptic.lat" />
+    </Group>
+    <Description>The Swift-XRT x-ray image in response to a Swift-BAT transient.</Description>
+  </What>
+  <WhereWhen>
+    <ObsDataLocation>
+      <ObservatoryLocation id="GEOLUN" />
+      <ObservationLocation>
+        <AstroCoordSystem id="UTC-FK5-GEO" />
+        <AstroCoords coord_system_id="UTC-FK5-GEO">
+          <Time unit="s">
+            <TimeInstant>
+              <ISOTime>2016-11-04T09:43:24.98</ISOTime>
+            </TimeInstant>
+          </Time>
+          <Position2D unit="deg">
+            <Name1>RA</Name1>
+            <Name2>Dec</Name2>
+            <Value2>
+              <C1>77.6232</C1>
+              <C2>-51.4183</C2>
+            </Value2>
+            <Error2Radius>0.0000</Error2Radius>
+          </Position2D>
+        </AstroCoords>
+      </ObservationLocation>
+    </ObsDataLocation>
+  <Description>The RA,Dec coordinates are of the type: source_object.</Description>
+  </WhereWhen>
+  <How>
+    <Description>Swift Satellite, XRT Instrument</Description>
+    <Reference uri="http://gcn.gsfc.nasa.gov/swift.html" type="url" />
+  </How>
+  <Why importance="0.99">
+    <Inference probability="0.9">
+      <Concept>process.variation.burst;em.gamma</Concept>
+    </Inference>
+  </Why>
+  <Citations>
+    <EventIVORN cite="followup">ivo://nasa.gsfc.gcn/SWIFT#BAT_GRB_Pos_720568-314</EventIVORN>
+    <Description>This is the XRT Processed Image for the original BAT trigger.</Description>
+  </Citations>
+  <Description>
+  </Description>
+</voe:VOEvent>

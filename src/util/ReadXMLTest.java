@@ -397,13 +397,14 @@ public class ReadXMLTest {
 //			System.out.println(longDateFormat.format(new Date())+"    	AMON_ICECUBE");
 //			TestSendEmail.sendToEmails( "C42 : AMON_ICECUBE",emails,config.toString());
 			
-			String messageContent=XML2File.readLogToString(filePath);
+//			String messageContent=XML2File.readLogToString(filePath);
+			String messageContent=GcnMailNoticeConverter.convertXmlToGcnNotice_All(config, subFolderName, PacketType, filePath);
 //			  EmailAttachment attachment = new EmailAttachment();
 //			  attachment.setPath(filePath);
 //			  attachment.setDisposition(EmailAttachment.ATTACHMENT);
 //			  attachment.setDescription(newFileName);
 //			  attachment.setName("John");
-			TestSendEmail.sendToEmails( "C42 : "+newFileName,emails,messageContent);
+			TestSendEmail.sendToHtmlEmails( "C42 : "+newFileName,emails,messageContent);
 			
 //			String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "plan.txt").getPath();
 //			String planString=GenerateAcpPlanString.doGenerate();

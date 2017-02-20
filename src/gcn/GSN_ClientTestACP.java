@@ -57,6 +57,15 @@ public class GSN_ClientTestACP {
             String testFilePath4=config.getString("testFilePath4",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath4.xml").getPath());
             String testFilePath5=config.getString("testFilePath5",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath5.xml").getPath());
             String testFilePath6=config.getString("testFilePath6",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath6.xml").getPath());
+            String testFilePath7=config.getString("testFilePath7",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath7.xml").getPath());
+            String testFilePath8=config.getString("testFilePath8",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath8.xml").getPath());
+            String testFilePath9=config.getString("testFilePath9",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath9.xml").getPath());
+            String testFilePath10=config.getString("testFilePath10",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath10.xml").getPath());
+            String testFilePath11=config.getString("testFilePath11",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath11.xml").getPath());
+            String testFilePath12=config.getString("testFilePath12",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath12.xml").getPath());
+            String testFilePath13=config.getString("testFilePath13",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath13.xml").getPath());
+            String testFilePath14=config.getString("testFilePath14",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath14.xml").getPath());
+            String testFilePath15=config.getString("testFilePath15",new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "testFilePath15.xml").getPath());
             List<String> filePathList=new ArrayList<String>();
             filePathList.add(testFilePath1);
             filePathList.add(testFilePath2);
@@ -64,6 +73,15 @@ public class GSN_ClientTestACP {
             filePathList.add(testFilePath4);
             filePathList.add(testFilePath5);
             filePathList.add(testFilePath6);
+            filePathList.add(testFilePath7);
+            filePathList.add(testFilePath8);
+            filePathList.add(testFilePath9);
+            filePathList.add(testFilePath10);
+            filePathList.add(testFilePath11);
+            filePathList.add(testFilePath12);
+            filePathList.add(testFilePath13);
+            filePathList.add(testFilePath14);
+            filePathList.add(testFilePath15);
             while (true) {
             	
             	
