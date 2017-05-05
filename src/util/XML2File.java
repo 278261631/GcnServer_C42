@@ -10,7 +10,7 @@ import java.util.*;
 public class XML2File {
 	
 	//完成写入就返回"" 否则返回拼接之后xmlString
-	public static String xmlStringToFile(String xmlOldString,String xmlNewString,String filePath, String saveRootPath, String[] emails) throws IOException, InterruptedException{
+	public static String xmlStringToFile(String xmlOldString,String xmlNewString,String filePath, String saveRootPath, String[] emails, String ftp_pass, String ftp_name, int ftp_port, String ftp_ip,String msg_url,String msg_name) throws IOException, InterruptedException{
 		String startXmlString="<?xml version = '1.0' encoding = 'UTF-8'?>";
 		String endXmlString="</voe:VOEvent>";
 
@@ -19,7 +19,7 @@ public class XML2File {
 				//if is the end of XML,save to temp 
 				writeLogCoverExist(xmlOldString+"\r\n"+xmlNewString+"\r\n",filePath);				
 				//check message type, copy to dest Path if needed
-				ReadXMLTest.saveUsefulMessageType(filePath, saveRootPath,emails);
+				ReadXMLTest.saveUsefulMessageType(filePath, saveRootPath,emails,ftp_ip,ftp_port,ftp_name,ftp_pass,msg_url,msg_name);
 				
 				//else 
 			}else {

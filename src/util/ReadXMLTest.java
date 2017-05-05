@@ -1,17 +1,38 @@
 package util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.SocketException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.net.PrintCommandListener;
+import org.apache.commons.net.ProtocolCommandListener;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+
 
 import acp.AcpControl;
 import acp.AcpStatusUpdater;
@@ -19,6 +40,7 @@ import acp.GenerateAcpPlanString;
 import acp.MyAcpCommandList;
 import gcn.GCNServer;
 import gcn.GcnMailNoticeConverter;
+import net.sf.json.JSONObject;
 
 
 
@@ -76,7 +98,7 @@ public class ReadXMLTest {
 	 * @throws IOException 
 	 * @throws InterruptedException 
 	 */
-	public static boolean saveUsefulMessageType(String filePath,String saveRootPath, String[] emails) throws IOException, InterruptedException{
+	public static boolean saveUsefulMessageType(String filePath,String saveRootPath, String[] emails,String ftp_ip,int ftp_port,String ftp_name,String ftp_pass,String msg_url,String msg_name) throws IOException, InterruptedException{
 		SimpleDateFormat longDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 		SimpleDateFormat lastDayFormat = new SimpleDateFormat("yyyy-MM-dd");
     	
@@ -221,6 +243,36 @@ public class ReadXMLTest {
 				
 				String stringDec=config.getString("WhereWhen.ObsDataLocation.ObservationLocation.AstroCoords.Position2D.Value2.C2");	
 				System.out.println(newFileName+"\t\tRA:\t"+stringRa+"\t\tDec:\t"+stringDec);
+				//-----------------
+
+				TaskData task=new TaskData("HMT_"+longDateFormat.format(new Date()), Double.parseDouble(stringRa), Double.parseDouble(stringDec), "1000");
+				JSONObject jsonObject=JSONObject.fromObject(task);
+				String textMessage=jsonObject.toString();
+				try {
+				    ConnectionFactory connectionFactory;
+				    Connection connection = null;
+				    Session session; 
+				    Destination destination;
+				    MessageProducer producer; 
+				    TextMessage message = null;
+			    	connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_USER, ActiveMQConnection.DEFAULT_PASSWORD, msg_url);
+					connection = connectionFactory.createConnection();		        
+			        connection.start();
+			        session = connection.createSession(Boolean.TRUE, Session.AUTO_ACKNOWLEDGE);
+			        destination = session.createTopic(msg_name);
+			        producer = session.createProducer(destination);
+					message=session.createTextMessage(textMessage);
+		            producer.send(message);
+		            System.out.println(textMessage);
+		            session.commit();
+				} catch (JMSException e) {
+					e.printStackTrace();
+				}finally {
+					
+				}
+				//------------------
+				
+				
 				
 //				String planFilePath=new File(Class.class.getClass().getResource("/").getPath().replace("%20", " "), "BatPlan.txt").getPath();
 //				double raInDegree=Double.parseDouble(stringRa);
@@ -427,6 +479,60 @@ public class ReadXMLTest {
 		XML2File.writeToLog(longDateFormatFile.format(new Date())+"\t\t\t"+copyToFilePath);
 //		System.out.println(copyToFilePath);
 		File copyToFile = new File(copyToFilePath);
+		//TODO save to FTP subFolderName/copyToFile
+
+		InputStream  in = null ;
+		try {
+			FTPClient ftp=new FTPClient();
+			 ftp.connect(ftp_ip, ftp_port);
+			 ftp.login(ftp_name, ftp_pass);
+			 String ftpSbuPath=subFolderName;
+			 ftp.enterLocalPassiveMode();
+			 String ftpFileName =filePath;
+			 String destFileName ="";
+			 String ftpDestFileName=newFileName;
+			 in = new BufferedInputStream(new FileInputStream(ftpFileName));
+			
+				boolean isSubDirectoryExsit = false;
+				FTPFile[] dirs = ftp.listDirectories();
+				if (dirs != null && dirs.length > 0) {
+				    for (int i = 0; i < dirs.length; i++) {
+				        if (dirs[i].getName().equals(ftpSbuPath)) {
+				            isSubDirectoryExsit = true;
+				        }
+				        break;
+				    }
+				}
+				dirs = null;
+				if (!isSubDirectoryExsit && !ftpSbuPath.equals("")) {
+			ftp.makeDirectory(ftpSbuPath);
+			destFileName = ftpSbuPath + "/" + ftpDestFileName;
+			}
+			if (isSubDirectoryExsit && !ftpSbuPath.equals("")) {
+				destFileName = ftpSbuPath + "/" + ftpDestFileName;
+			}
+			 
+			if (!ftp.storeFile(destFileName, in)) {
+				throw new IOException("Can't upload file '" + ftpFileName + "' to FTP server. Check FTP permissions and path.");
+			}
+			in.close();
+			
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} 
+
+        
+        
 		new File(filePath).renameTo(copyToFile);
 
 		return false; //这里应该是输出错误信息

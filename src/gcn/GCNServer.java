@@ -84,8 +84,14 @@ public class GCNServer extends ServerSocket {
         	String filter = config.getString("filter","");
         	String HmtLimitAngle = config.getString("HmtLimitAngle","30");
         	String HMTlastPlanDir = config.getString("HMTlastPlanDir","");
-//        	String[] emails=config.getStringArray("emails");//"278261631@qq.com"
-        	String emailString=config.getString("emails");//"278261631@qq.com"
+//        	String[] emails=config.getStringArray("emails");
+        	String emailString=config.getString("emails");
+        	String ftp_ip=config.getString("ftp_ip");
+        	String ftp_name=config.getString("ftp_name");
+        	String ftp_pass=config.getString("ftp_pass");
+        	String ftp_port=config.getString("ftp_port");
+        	String msg_name=config.getString("msg_name");
+        	String msg_url=config.getString("msg_url");
         	String[] emails=emailString.split(",");
         	String resultString=TestSendEmail.emailCheck(emails);
         	if (null!=resultString && resultString.length()>0) {
@@ -104,6 +110,8 @@ public class GCNServer extends ServerSocket {
     	    System.out.println("acpPass : "+acpPass);
     	    System.out.println("filter : "+filter);
     	    System.out.println("HmtLimitAngle : "+HmtLimitAngle);
+    	    System.out.println("ftp to : "+ftp_ip+"   "+ftp_port+"   "+ftp_name+"   "+ftp_pass);
+    	    System.out.println("message to : "+msg_url+"   "+msg_name);
     		File dirFile=new File(outRootDir);
     		if (!dirFile.exists()) {
     			dirFile.mkdirs();
@@ -118,7 +126,7 @@ public class GCNServer extends ServerSocket {
                     	line = bufferedReader.readLine();
 //                    	System.out.println(line);
                     	//save xmlFile first , Then Copy to other place
-						xmlOldString=XML2File.xmlStringToFile(xmlOldString, line, tempFilePath,outRootDir,emails);
+						xmlOldString=XML2File.xmlStringToFile(xmlOldString, line, tempFilePath,outRootDir,emails, ftp_pass, ftp_name, Integer.parseInt(ftp_port), ftp_ip,msg_url,msg_name);
                 }
                 System.out.println("Client(" + getName() + ") exit!");
 //                printWriter.close();
@@ -151,8 +159,9 @@ public class GCNServer extends ServerSocket {
     		cex.printStackTrace();
     	}
     	SERVER_PORT=config.getInt("SERVER_PORT" , 5348);
-    	ThreadAcpControl a = new ThreadAcpControl(lock);
-    	a.start();
+//    	ThreadAcpControl a = new ThreadAcpControl(lock);
+//    	a.start();
+    	//TODO  test FTP
         setGcnServer(new GCNServer(SERVER_PORT));
         
         //run in windows command demo :
